@@ -30,12 +30,7 @@ const fs = require('fs');
 
 
         const json = await res.json();
-
-        // console.log("logging json");
-        // console.log(json);
-        const spec_data = json["data"]["exploreCompanies"]["results"];
-        // console.log(spec_data)
-        return spec_data;
+        return json["data"]["exploreCompanies"]["results"];
     }
 
     async function scrape_one_url(comp_size, industry) {
@@ -43,39 +38,43 @@ const fs = require('fs');
         const stopPage = 10;
         const perPage = 1000;
 
+        let count = 0; // count how many elements you get
+
         while (page <= stopPage) {
             const pageResults = await getPageResults(comp_size, industry, page, perPage);
             // console.log(pageResults)
-            // console.log(pageResults[0]["company"]["name"])
-    
             if (pageResults == undefined) {
                 console.log("failed: pageResults == undefined");
                 exit(1);
             } else if (pageResults.length > 0) {
-                console.log("pageResults.length = " + pageResults.length + "\n");
-                // dataRes.companies.push(...pageResults);
+                // console.log("pageResults.length = " + pageResults.length + "\n");
                 for (let i=0; i < pageResults.length; i++) {
                     dataRes.companies.push(pageResults[i]["company"]["name"]);
                 }
                 await fs.writeFileSync(dataFileName, JSON.stringify(dataRes), 'utf-8');
-                console.log('Successfully scraped page ' + page)
+                // console.log('Successfully scraped page ' + page)
                 page += 1;
+                count+= pageResults.length
             } else {
-                console.log("Breaking: pageResults.length = " + pageResults.length + "\n");
+                // console.log("Breaking: pageResults.length = " + pageResults.length + "\n");
                 break; // in case you hit the end of the results early
             }
     
-            console.log(`page: ${page}, stopPage: ${stopPage}, pageResults.length: ${pageResults.length}`)
+            // console.log(`page: ${page}, stopPage: ${stopPage}, pageResults.length: ${pageResults.length}`)
         }
-    
-        console.log('Exited!')
+        return count;
+
     }
 
-    const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"']
+    
+    const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
     let industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
-    console.log(industries[0]);
-    scrape_one_url(comp_sizes[0], "7f5af63c-8321-4846-8f7a-2f80987432a5");
-
-   
-
+    // console.log(industries[0]);
+    let total_count = 0;
+    for (let i = 0; i < comp_sizes.length; i++) {
+        for (let j = 0; j < industries.length; j++) {
+            total_count += await scrape_one_url(comp_sizes[i], industries[i]["id"]);
+            console.log(`i = ${i}, j=${j}, total_count = ${total_count}`)
+        }
+    }
 })();
