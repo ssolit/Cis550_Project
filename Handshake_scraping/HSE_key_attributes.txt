@@ -1,0 +1,10 @@
+Key attributes
+	1.	name
+	2.	website
+	3.	email       			// probably HR/Hiring manager’s email
+	4.	phone
+	5.	institution_size_id 		// 4 indicates 100-250 employees
+	6.	facebook_url
+	7.	twitter_url
+	8.	linkedin_url
+	9.	location_country
