@@ -1,7 +1,12 @@
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
-const save_path = "./TO_jsons"
+
+const save_path = "./TO_jsons.json"
+let companies = fs.readFileSync(save_path, 'utf-8');
+let dataRes = JSON.parse(companies);
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 async function fetchCompInfo(comp_name) {
     const res = await fetch(`https://theorg.com/_next/data/1jLk7x0pxwHYH6sI5YJAe/org/${comp_name}.json?companySlug=${comp_name}`, {
@@ -20,7 +25,7 @@ async function fetchCompInfo(comp_name) {
           "tracestate": "2591176@nr=0-1-2591176-1134211314-2c50da4c71497e0b----1665622051547",
           "x-nextjs-data": "1",
           "cookie": "CookieConsent={stamp:%27-1%27%2Cnecessary:true%2Cpreferences:true%2Cstatistics:true%2Cmarketing:true%2Cver:1%2Cutc:1665502250426%2Cregion:%27US%27}; _gcl_au=1.1.574958985.1665502250; _gid=GA1.2.1194260843.1665502251; _fbp=fb.1.1665502250694.1986845046; hubspotutk=10470e516c35d44977dc45593c00528c; AMP_MKTG_261f38a0f0=JTdCJTdE; _hjSessionUser_1219630=eyJpZCI6IjMwMTg5MjIyLTk0YTYtNTljOC1hNTE2LWQzYTQxY2RjZjVkOSIsImNyZWF0ZWQiOjE2NjU1MDIyNTA3MzYsImV4aXN0aW5nIjp0cnVlfQ==; __hssrc=1; __hstc=3035439.10470e516c35d44977dc45593c00528c.1665502250765.1665593617046.1665598265475.6; AMP_261f38a0f0=JTdCJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJkZXZpY2VJZCUyMiUzQSUyMmRhNDQyYTQ2LWYyYjYtNDMxMS05NDBkLTAyOTZmNzU0NWM0OCUyMiUyQyUyMmxhc3RFdmVudFRpbWUlMjIlM0ExNjY1NjAyMTY3ODYxJTJDJTIyc2Vzc2lvbklkJTIyJTNBMTY2NTU5ODI2MDI4MyU3RA==; _ga=GA1.2.114902465.1665502250; _hjAbsoluteSessionInProgress=1; _ga_5NXQ655FGP=GS1.1.1665622050.7.0.1665622050.0.0.0",
-          "Referer": "https://theorg.com/org/google/org-chart",
+          "Referer": `https://theorg.com/org/${comp_name}/org-chart`,
           "Referrer-Policy": "strict-origin-when-cross-origin"
         },
         "body": null,
@@ -34,17 +39,26 @@ async function fetchCompInfo(comp_name) {
 
 
 // extract company urls 
-function extractItems() {
-  // set selector to JS path of relevent elements
-  let selector = '#__next > div.Layout_layoutWrapper__FFUAO > div > div > div > div.FilterResults_root__6CKVx > div > div > div > ul > li > div > div.ExploreCompanyRow_content___UlQH > ul > li.ExploreCompanyRow_seeMore__Onttj > a'
-  const extractedElements = document.querySelectorAll(selector);
-    const names = [];
+async function extractItems() {
+    // set selector to JS path of relevent elements - I.E. links to company pages
+    let selector = '#__next > div.Layout_layoutWrapper__FFUAO > div > div > div > div.FilterResults_root__6CKVx > div > div > div > ul > li > div > div.ExploreCompanyRow_content___UlQH > ul > li.ExploreCompanyRow_seeMore__Onttj > a'
+    const extractedElements = document.querySelectorAll(selector);
+    const items = [];
     for (let element of extractedElements) {
-      let c_name = element.getAttribute('href').split("/")[2] // get name from url
-      names.push(c_name);
+        let c_name = element.getAttribute('href').split("/")[2]; // get name from url
+        try {
+            // await fetchCompInfo(c_name).then(json => {
+            //     items.push({"CompanyName":c_name, "orgScrapeInfo": json});
+            // });
+            const json = await fetchCompInfo(c_name);
+            items.push({"CompanyName":c_name, "orgScrapeInfo": json});
+        } catch(e) { 
+            items.push({"CompanyName":c_name, "orgScrapeInfo": "Error: scrape failed"});
+        }
+        // items.push({"CompanyName":c_name, "orgScrapeInfo": "test push"});
     }
-    return names;
-  }
+    return items;
+}
 
 
 async function scrapeItems(
@@ -53,17 +67,24 @@ async function scrapeItems(
     itemCount,
     scrollDelay = 800,
     ) {
-    let c_names = ['google', 'amazon'];
-    jsons = []
-    for (let n of c_names) {
-        try {
-            const json = await fetchCompInfo(n);
-            console.log(json);
-            jsons.push(json);
-        } catch(e) { }
+        console.log()
+        console.log("starting google test")
+        json = await fetchCompInfo("google");
+        console.log(json["pageProps"]["initialCompany"]);
+        console.log();
 
-    }
-        return jsons;
+
+        console.log("calling extract")
+        items = await page.evaluate(extractItems);
+        console.log("exitied extract")
+        // items = ["gogole", "asdf"];
+        console.log("items.length = " + items.length);
+        for (const i in items) {
+            console.log(items[i]);
+            dataRes.companies.push(items[i]);
+        }
+        await fs.writeFileSync(save_path, JSON.stringify(dataRes), 'utf-8');
+        return items
     }
 
 (async () => {
@@ -82,7 +103,7 @@ async function scrapeItems(
     const items = await scrapeItems(page, extractItems, 10);
     
     // Save extracted items to a new file.
-    fs.writeFileSync(save_path, items.join('\n') + '\n');
+    // fs.writeFileSync(save_path, items.join('\n') + '\n');
     
     // Close the browser.
     await browser.close();
