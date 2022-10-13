@@ -6,15 +6,7 @@ const fs = require('fs');
     let companies = fs.readFileSync(dataFileName, 'utf-8');
     let dataRes = JSON.parse(companies);
 
-    // configure search bounds. 
-    // Note handshake won't let you search beyond 10k entries. good params are 1, 10, 1000
-    var page = 1; // start page
-    const stopPage = 10;
-    const perPage = 1000;
-
-    // `https://app.joinhandshake.com/stu/employers?page=${page}&per_page=${perPage}&sort_direction=desc&sort_column=default&institution_sizes%5B%5D=4&_=${Date.now()}`
-
-    async function getPageResults(page) {
+    async function getPageResults(comp_size, industry_id, page, perPage) {
         const res = await fetch("https://prod-graphql-api.theorg.com/graphql", {
             "headers": {
               "accept": "*/*",
@@ -32,7 +24,7 @@ const fs = require('fs');
               "Referer": "https://theorg.com/",
               "Referrer-Policy": "strict-origin-when-cross-origin"
             },
-            "body": `{\"operationName\":\"exploreCompanies\",\"variables\":{\"countries\":[\"US\"],\"categories\":[],\"employeeRanges\":[\"200-500\"],\"offset\":${(page - 1) * perPage},\"limit\":${perPage}},\"query\":\"query exploreCompanies($countries: [String!], $categories: [String!], $employeeRanges: [String!], $limit: Int!, $offset: Int!) {\\n  exploreCompanies(\\n    countries: $countries\\n    categories: $categories\\n    employeeRanges: $employeeRanges\\n    limit: $limit\\n    offset: $offset\\n  ) {\\n    paging {\\n      total\\n      pages\\n      current\\n      __typename\\n    }\\n    results {\\n      company {\\n        id\\n        slug\\n        name\\n        logoImage {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        description\\n        positionCount\\n        verification {\\n          verificationType\\n          __typename\\n        }\\n        adminLocked\\n        __typename\\n      }\\n      following\\n      id\\n      positionExamples {\\n        slug\\n        image {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}`,
+            "body": `{\"operationName\":\"exploreCompanies\",\"variables\":{\"countries\":[\"US\"],\"categories\":[\"${industry_id}\"\],\"employeeRanges\":[${comp_size}],\"offset\":${(page - 1) * perPage},\"limit\":${perPage}},\"query\":\"query exploreCompanies($countries: [String!], $categories: [String!], $employeeRanges: [String!], $limit: Int!, $offset: Int!) {\\n  exploreCompanies(\\n    countries: $countries\\n    categories: $categories\\n    employeeRanges: $employeeRanges\\n    limit: $limit\\n    offset: $offset\\n  ) {\\n    paging {\\n      total\\n      pages\\n      current\\n      __typename\\n    }\\n    results {\\n      company {\\n        id\\n        slug\\n        name\\n        logoImage {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        description\\n        positionCount\\n        verification {\\n          verificationType\\n          __typename\\n        }\\n        adminLocked\\n        __typename\\n      }\\n      following\\n      id\\n      positionExamples {\\n        slug\\n        image {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}`,
             "method": "POST"
           });
 
@@ -46,9 +38,13 @@ const fs = require('fs');
         return spec_data;
     }
 
-    async function scrape_one_url(url) {
+    async function scrape_one_url(comp_size, industry) {
+        var page = 1; 
+        const stopPage = 10;
+        const perPage = 1000;
+
         while (page <= stopPage) {
-            const pageResults = await getPageResults(page);
+            const pageResults = await getPageResults(comp_size, industry, page, perPage);
             // console.log(pageResults)
             // console.log(pageResults[0]["company"]["name"])
     
@@ -75,31 +71,11 @@ const fs = require('fs');
         console.log('Exited!')
     }
 
-    scrape_one_url();
+    const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"']
+    let industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
+    console.log(industries[0]);
+    scrape_one_url(comp_sizes[0], "7f5af63c-8321-4846-8f7a-2f80987432a5");
 
    
 
 })();
-
-
-
-
-
-
-
-
-
-function getURLs() {
-    const base_url = "https://theorg.com/organizations?countries=united-states";
-    const sizes = ['200-500', '50-200', '10-50']
-    let industries = fs.readFileSync("industries.json", 'utf-8');
-    let industry_list= JSON.parse(industries)["data"]["companyIndustries"];
-    let urls = [];
-
-    for (const s_index in sizes) {
-        for (const i_index in industry_list) {
-            urls.push(base_url + "&employeeRanges=" + sizes[s_index] + "&industries=" + industry_list[i_index]["title"].replaceAll(" ", "-"));
-        }
-    }
-    return urls;
-}
