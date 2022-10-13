@@ -46,36 +46,38 @@ const fs = require('fs');
         return spec_data;
     }
 
-    async function scrape_one_url() {
-        fs.lstat
-    }
-    while (page <= stopPage) {
-        const pageResults = await getPageResults(page);
-        // console.log(pageResults)
-        // console.log(pageResults[0]["company"]["name"])
-
-        if (pageResults == undefined) {
-            console.log("failed: pageResults == undefined");
-            exit(1);
-        } else if (pageResults.length > 0) {
-            console.log("pageResults.length = " + pageResults.length + "\n");
-            // dataRes.companies.push(...pageResults);
-            for (let i=0; i < pageResults.length; i++) {
-                dataRes.companies.push(pageResults[i]["company"]["name"]);
+    async function scrape_one_url(url) {
+        while (page <= stopPage) {
+            const pageResults = await getPageResults(page);
+            // console.log(pageResults)
+            // console.log(pageResults[0]["company"]["name"])
+    
+            if (pageResults == undefined) {
+                console.log("failed: pageResults == undefined");
+                exit(1);
+            } else if (pageResults.length > 0) {
+                console.log("pageResults.length = " + pageResults.length + "\n");
+                // dataRes.companies.push(...pageResults);
+                for (let i=0; i < pageResults.length; i++) {
+                    dataRes.companies.push(pageResults[i]["company"]["name"]);
+                }
+                await fs.writeFileSync(dataFileName, JSON.stringify(dataRes), 'utf-8');
+                console.log('Successfully scraped page ' + page)
+                page += 1;
+            } else {
+                console.log("Breaking: pageResults.length = " + pageResults.length + "\n");
+                break; // in case you hit the end of the results early
             }
-            await fs.writeFileSync(dataFileName, JSON.stringify(dataRes), 'utf-8');
-            console.log('Successfully scraped page ' + page)
-            page += 1;
-        } else {
-            console.log("Breaking: pageResults.length = " + pageResults.length + "\n");
-            break; // in case you hit the end of the results early
+    
+            console.log(`page: ${page}, stopPage: ${stopPage}, pageResults.length: ${pageResults.length}`)
         }
-
-        console.log(`page: ${page}, stopPage: ${stopPage}, pageResults.length: ${pageResults.length}`)
-        
+    
+        console.log('Exited!')
     }
 
-    console.log('Exited!')
+    scrape_one_url();
+
+   
 
 })();
 
