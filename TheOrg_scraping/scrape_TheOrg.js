@@ -49,16 +49,20 @@ const fs = require('fs');
             } else if (pageResults.length > 0) {
                 // console.log("pageResults.length = " + pageResults.length + "\n");
                 for (let i=0; i < pageResults.length; i++) {
-                    dataRes.companies.push({"preview": {"TO_id":pageResults[i]["id"],
+                    if (pageResults[i]["positionExamples"].length > 0) { // only record companies with an employee since thats more useful for us
+                        // console.log(pageResults[i]["company"]["name"], pageResults[i]["positionExamples"].length)
+                        dataRes.companies.push({"preview": {"TO_id":pageResults[i]["id"],
                                                         "name":pageResults[i]["company"]["name"],
                                                         "description":pageResults[i]["company"]["description"],
-                                                        "positionExamples":pageResults[i]["company"]["ositionExamples"]
+                                                        "positionExamples":pageResults[i]["positionExamples"]
                                                         }});
+                        count++;
+                    }
                 }
                 await fs.writeFileSync(dataFileName, JSON.stringify(dataRes), 'utf-8');
                 // console.log('Successfully scraped page ' + page)
                 page += 1;
-                count+= pageResults.length
+                // count+= pageResults.length
             } else {
                 // console.log("Breaking: pageResults.length = " + pageResults.length + "\n");
                 break; // in case you hit the end of the results early
@@ -71,47 +75,25 @@ const fs = require('fs');
     }
 
     // const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
-    const comp_sizes = ["\"1-10\",\"10-50\",\"50-200\",\"200-500\",\"500-1000\",\"1000-5000\",\"5000-10000\",\">10000\""];
+    const comp_sizes = ["\"1-10\"","\"10-50\"","\"50-200\"","\"200-500\"","\"500-1000\"","\"1000-5000\"","\"5000-10000\"","\">10000\""];
     let industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
 
     // await scrape_one_url(comp_sizes[0], industries[0]["id"]); // for debugging
-
+    // console.log(comp_sizes.length)
+    
     let total_count = 0;
+    const desired_entries = 250000;
     for (let i = 0; i < comp_sizes.length; i++) {
         for (let j = 0; j < industries.length; j++) {
             total_count += await scrape_one_url(comp_sizes[i], industries[i]["id"]);
             console.log(`i = ${i}, j=${j}, total_count = ${total_count}`)
-            if (total_count > 100000) {
+            if (total_count > desired_entries) {
                 break;
             }
         }
-        if (total_count > 100000) {
+        if (total_count > desired_entries) {
             break;
         }
     }
 
 })();
-
-
-
-
-fetch("https://prod-graphql-api.theorg.com/graphql", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "content-type": "application/json",
-    "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjI1OTExNzYiLCJhcCI6IjExMzQyMTEzMTQiLCJpZCI6ImFmZWRlNzNhMzBjYTE1ZmMiLCJ0ciI6IjQ0MzgxNjhlNDM3OWZkNjc0NjYzMDhkMjIwNDVkZTg5IiwidGkiOjE2NjU3MDgxNjczNzh9fQ==",
-    "sec-ch-ua": "\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"macOS\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-site",
-    "traceparent": "00-4438168e4379fd67466308d22045de89-afede73a30ca15fc-01",
-    "tracestate": "2591176@nr=0-1-2591176-1134211314-afede73a30ca15fc----1665708167378",
-    "Referer": "https://theorg.com/",
-    "Referrer-Policy": "strict-origin-when-cross-origin"
-  },
-  "body": "{\"operationName\":\"exploreCompanies\",\"variables\":{\"countries\":[],\"categories\":[],\"employeeRanges\":[\"1-10\",\"10-50\",\"50-200\",\"200-500\",\"500-1000\",\"1000-5000\",\"5000-10000\",\">10000\"],\"offset\":0,\"limit\":30},\"query\":\"query exploreCompanies($countries: [String!], $categories: [String!], $employeeRanges: [String!], $limit: Int!, $offset: Int!) {\\n  exploreCompanies(\\n    countries: $countries\\n    categories: $categories\\n    employeeRanges: $employeeRanges\\n    limit: $limit\\n    offset: $offset\\n  ) {\\n    paging {\\n      total\\n      pages\\n      current\\n      __typename\\n    }\\n    results {\\n      company {\\n        id\\n        slug\\n        name\\n        logoImage {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        description\\n        positionCount\\n        verification {\\n          verificationType\\n          __typename\\n        }\\n        adminLocked\\n        __typename\\n      }\\n      following\\n      id\\n      positionExamples {\\n        slug\\n        image {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}",
-  "method": "POST"
-});
