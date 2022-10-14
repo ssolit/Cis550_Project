@@ -40,35 +40,25 @@ const fs = require('fs');
     }
 
     async function scrape_one_chart(c_name) {
-        console.log("entered scrape_one" + "\n\n")
+        // console.log("entered scrape_one" + "\n\n")
         const result = await fetchCompInfo(c_name);
-        console.log("finished fetch\n")
+        // console.log("finished fetch\n")
 
-
-        let chart = {"initialCompany":result["pageProps"]["initialCompany"],
-                  "__APOLLO_STATE__":result["pageProps"]["__APOLLO_STATE__"]  }
-        
-
-        const chart_keys = Object.keys(chart["__APOLLO_STATE__"])
-        let people_keys = []
-        let people_objects  = []
-        var re = new RegExp("^FlatPosition:");
-        for (let i = 0; i < chart_keys.length; i++) {
-            if (re.test(chart_keys[i])) {
-                people_keys.push(chart_keys[i])
-                people_objects.push(chart["__APOLLO_STATE__"][chart_keys[i]])
-            }
-        }
-        console.log(people_keys)
-        console.log(chart["__APOLLO_STATE__"][people_keys[0]])
-
-        let clean_chart = {"CompanyInfo":result["pageProps"]["initialCompany"],
-                            "employees":people_objects}
-        orgChartsObj.orgCharts.push(clean_chart)
-
+        // let chart = {"initialCompany":result["pageProps"]["initialCompany"]} // Has all info, but a lot not relevant. Also hard to read
+        let cleaner_chart = {"CompanyName":result["pageProps"]["initialCompany"]["name"],
+                            "employeeNodes": result["pageProps"]["initialCompany"]["nodes"],
+                            "stats": {
+                                "social": result["pageProps"]["initialCompany"]["social"],
+                                "location": result["pageProps"]["initialCompany"]["location"],
+                                "description": result["pageProps"]["initialCompany"]["description"],
+                                "employeeRange": result["pageProps"]["initialCompany"]["stats"]["employeeRange"],
+                                "stage":result["pageProps"]["initialCompany"]["stats"]["stage"],
+                                "industries": result["pageProps"]["initialCompany"]["stats"]["industries"],
+                                "lastUpdate": result["pageProps"]["initialCompany"]["stats"]["lastUpdate"],
+                                }
+                            }
+        orgChartsObj.orgCharts.push(cleaner_chart)
         await fs.writeFileSync(save_path, JSON.stringify(orgChartsObj), 'utf-8');
-
-        
     }
     function clean_name(c_name) {
         return c_name.replaceAll(" ", "-")
