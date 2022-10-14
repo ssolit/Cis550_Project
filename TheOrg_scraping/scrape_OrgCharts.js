@@ -45,10 +45,22 @@ const fs = require('fs');
         console.log("finished fetch\n")
 
 
-        let el = {"initialCompany":result["pageProps"]["initialCompany"],
+        let chart = {"initialCompany":result["pageProps"]["initialCompany"],
                   "__APOLLO_STATE__":result["pageProps"]["__APOLLO_STATE__"]  }
+        
 
-        console.log(el)
+        const chart_keys = Object.keys(chart["__APOLLO_STATE__"])
+        let people_keys = []
+        var re = new RegExp("^FlatPosition:");
+        for (let i = 0; i < chart_keys.length; i++) {
+            if (re.test(chart_keys[i])) {
+                people_keys.push(chart_keys[i])
+            }
+        }
+        console.log(people_keys)
+        console.log(chart["__APOLLO_STATE__"][people_keys[0]])
+
+        
     }
     function clean_name(c_name) {
         return c_name.replaceAll(" ", "-")
