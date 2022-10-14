@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 (async function() {
-    const dataFileName = "TO_companies.json"; // change file path here.
+    const dataFileName = "TO_company_previews.json"; // change file path here.
 
     let companies = fs.readFileSync(dataFileName, 'utf-8');
     let dataRes = JSON.parse(companies);
@@ -49,7 +49,11 @@ const fs = require('fs');
             } else if (pageResults.length > 0) {
                 // console.log("pageResults.length = " + pageResults.length + "\n");
                 for (let i=0; i < pageResults.length; i++) {
-                    dataRes.companies.push(pageResults[i]["company"]["name"]);
+                    dataRes.companies.push({"preview": {"TO_id":pageResults[i]["id"],
+                                                        "name":pageResults[i]["company"]["name"],
+                                                        "description":pageResults[i]["company"]["description"],
+                                                        "positionExamples":pageResults[i]["company"]["ositionExamples"]
+                                                        }});
                 }
                 await fs.writeFileSync(dataFileName, JSON.stringify(dataRes), 'utf-8');
                 // console.log('Successfully scraped page ' + page)
@@ -69,12 +73,15 @@ const fs = require('fs');
     
     const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
     let industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
-    // console.log(industries[0]);
-    let total_count = 0;
-    for (let i = 0; i < comp_sizes.length; i++) {
-        for (let j = 0; j < industries.length; j++) {
-            total_count += await scrape_one_url(comp_sizes[i], industries[i]["id"]);
-            console.log(`i = ${i}, j=${j}, total_count = ${total_count}`)
-        }
-    }
+
+    await scrape_one_url(comp_sizes[0], industries[0]["id"]);
+
+    // let total_count = 0;
+    // for (let i = 0; i < comp_sizes.length; i++) {
+    //     for (let j = 0; j < industries.length; j++) {
+    //         total_count += await scrape_one_url(comp_sizes[i], industries[i]["id"]);
+    //         console.log(`i = ${i}, j=${j}, total_count = ${total_count}`)
+    //     }
+    // }
+
 })();

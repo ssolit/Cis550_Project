@@ -1,0 +1,32 @@
+{"companies":[
+    {"name":"Oltmans Construction Co.",
+    "preview":
+        {"company":
+            {"id":"6bbb9ce7-1741-4746-8c82-72e3f5defcd7","slug":"oltmans-construction-co",
+            "name":"Oltmans Construction Co.","logoImage":
+                {"uri":"702094e0-b3b1-4c01-b9eb-46eb37d3b1fc",
+                "ext":"jpg",
+                "versions":["thumb","small","medium","large"],"endpoint":"https://cdn.theorg.com","prevailingColor":"#ffffff","placeholderDataUrl":null,"__typename":"Image"},
+            "description":"Oltmans Construction Co. is an industrial and commercial general contractor.",
+            "positionCount":20,
+            "verification":{"verificationType":"unverified",        
+                "__typename":"CompanyVerification"},
+                "adminLocked":false,
+                "__typename":"LightCompany"},
+        "following":false,
+        "id":"6bbb9ce7-1741-4746-8c82-72e3f5defcd7",
+        "positionExamples":[
+            {"slug":"john-gormly",
+                "image":
+                    {"uri":"30472d96-d7c6-4a20-8bad-251bdf433f0b",
+                    "ext":"png",
+                    "versions":["thumb","small","medium","large"],
+                    "endpoint":"https://cdn.theorg.com",
+                    "prevailingColor":"#ffffff",
+                    "placeholderDataUrl":null,
+                    "__typename":"Image"},
+                "__typename":"PositionImageOnly"},
+            {"slug":"charles-roy","image":
+                {"uri":"e2356679-cb2f-4eea-b268-19905cbc4e26","ext":"png","versions":["thumb","small","medium","large"],"endpoint":"https://cdn.theorg.com","prevailingColor":"#ffffff","placeholderDataUrl":null,"__typename":"Image"},"__typename":"PositionImageOnly"},
+            {"slug":"jason-kakimoto","image":{"uri":"de942bcd-48df-4f0c-b382-06bd985d07d3","ext":"jpg","versions":["thumb","medium","small","original","large"],"endpoint":"https://cdn.theorg.com","prevailingColor":"#ffffff","placeholderDataUrl":null,"__typename":"Image"},"__typename":"PositionImageOnly"}],
+        "__typename":"ExploreCompany"}}]}
