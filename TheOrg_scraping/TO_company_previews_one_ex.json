@@ -3,7 +3,9 @@
     "preview":
         {"company":
             {"id":"6bbb9ce7-1741-4746-8c82-72e3f5defcd7","slug":"oltmans-construction-co",
-            "name":"Oltmans Construction Co.","logoImage":
+            "name":"Oltmans Construction Co.",
+            "slug":"oltmans-construction-co",
+            "logoImage":
                 {"uri":"702094e0-b3b1-4c01-b9eb-46eb37d3b1fc",
                 "ext":"jpg",
                 "versions":["thumb","small","medium","large"],"endpoint":"https://cdn.theorg.com","prevailingColor":"#ffffff","placeholderDataUrl":null,"__typename":"Image"},

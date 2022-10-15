@@ -53,6 +53,7 @@ const fs = require('fs');
                         // console.log(pageResults[i]["company"]["name"], pageResults[i]["positionExamples"].length)
                         dataRes.companies.push({"preview": {"TO_id":pageResults[i]["id"],
                                                         "name":pageResults[i]["company"]["name"],
+                                                        "slug":pageResults[i]["company"]["slug"], // name formated for fetch requests
                                                         "description":pageResults[i]["company"]["description"],
                                                         "positionExamples":pageResults[i]["positionExamples"]
                                                         }});
@@ -60,22 +61,19 @@ const fs = require('fs');
                     }
                 }
                 await fs.writeFileSync(dataFileName, JSON.stringify(dataRes), 'utf-8');
-                // console.log('Successfully scraped page ' + page)
                 page += 1;
                 // count+= pageResults.length
             } else {
                 // console.log("Breaking: pageResults.length = " + pageResults.length + "\n");
                 break; // in case you hit the end of the results early
             }
-    
-            // console.log(`page: ${page}, stopPage: ${stopPage}, pageResults.length: ${pageResults.length}`)
         }
         return count;
 
     }
 
-    // const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
-    const comp_sizes = ["\"1-10\"","\"10-50\"","\"50-200\"","\"200-500\"","\"500-1000\"","\"1000-5000\"","\"5000-10000\"","\">10000\""];
+    const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
+    // const comp_sizes = ["\"1-10\"","\"10-50\"","\"50-200\"","\"200-500\"","\"500-1000\"","\"1000-5000\"","\"5000-10000\"","\">10000\""];
     let industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
 
     // await scrape_one_url(comp_sizes[0], industries[0]["id"]); // for debugging
