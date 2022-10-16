@@ -1,12 +1,23 @@
 const fs = require('fs');
 
 (async function() {
+    // The program starts by loading in a file called dataFileName. You will have to create a json file with this name and paste “ {“companies”:[]} “ in it for it to load in without errors
     const dataFileName = "TO_company_previews.json"; // change file path here.
-
     let companies = fs.readFileSync(dataFileName, 'utf-8');
     let dataRes = JSON.parse(companies);
 
+
+    // iterate over these lists to scrape things in chunks
+    const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
+    // const comp_sizes = ["\"1-10\"","\"10-50\"","\"50-200\"","\"200-500\"","\"500-1000\"","\"1000-5000\"","\"5000-10000\"","\">10000\""];
+    const industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
+
+
+
     async function getPageResults(comp_size, industry_id, page, perPage) {
+        // these fetches com from a page like https://theorg.com/organizations?countries=united-states&employeeRanges=200-500
+        // you can find it by doing inspect, going to the network tab, finding the graphql call whose results starts with "{"data":{"exploreCompanies":", right clicking, and then copying as a Node.js fetch
+        // remember to replace the part of the call body with code that substitues in variables: \"variables\":{\"countries\":[\"US\"],\"categories\":[\"${industry_id}\"\],\"employeeRanges\":[${comp_size}],\"offset\":${(page - 1) * perPage},\"limit\":${perPage}}
         const res = await fetch("https://prod-graphql-api.theorg.com/graphql", {
             "headers": {
               "accept": "*/*",
@@ -47,15 +58,13 @@ const fs = require('fs');
                 console.log("failed: pageResults == undefined");
                 exit(1);
             } else if (pageResults.length > 0) {
-                // console.log("pageResults.length = " + pageResults.length + "\n");
                 for (let i=0; i < pageResults.length; i++) {
                     if (pageResults[i]["positionExamples"].length > 0) { // only record companies with an employee since thats more useful for us
-                        // console.log(pageResults[i]["company"]["name"], pageResults[i]["positionExamples"].length)
                         dataRes.companies.push({"preview": {"TO_id":pageResults[i]["id"],
                                                         "name":pageResults[i]["company"]["name"],
                                                         "slug":pageResults[i]["company"]["slug"], // name formated for fetch requests
                                                         "description":pageResults[i]["company"]["description"],
-                                                        "positionExamples":pageResults[i]["positionExamples"]
+                                                        "positionExamples":pageResults[i]["positionExamples"] // previews only give 3 examples instead of the whole chart
                                                         }});
                         count++;
                     }
@@ -72,13 +81,8 @@ const fs = require('fs');
 
     }
 
-    const comp_sizes = ['\"200-500\"', '\"50-200\"', '\"10-50\"'];
-    // const comp_sizes = ["\"1-10\"","\"10-50\"","\"50-200\"","\"200-500\"","\"500-1000\"","\"1000-5000\"","\"5000-10000\"","\">10000\""];
-    let industries = JSON.parse(fs.readFileSync("industries.json", 'utf-8'))["data"]["companyIndustries"];
-
-    // await scrape_one_url(comp_sizes[0], industries[0]["id"]); // for debugging
-    // console.log(comp_sizes.length)
     
+
     let total_count = 0;
     const desired_entries = 250000;
     for (let i = 0; i < comp_sizes.length; i++) {
