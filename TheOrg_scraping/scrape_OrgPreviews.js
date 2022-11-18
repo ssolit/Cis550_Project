@@ -2,7 +2,7 @@ const fs = require('fs');
 
 (async function() {
     // The program starts by loading in a file called dataFileName. You will have to create a json file with this name and paste “ {“companies”:[]} “ in it for it to load in without errors
-    const dataFileName = "TO_company_previews.json"; // change file path here.
+    const dataFileName = "TO_company_previews_2.json"; // change file path here.
     let companies = fs.readFileSync(dataFileName, 'utf-8');
     let dataRes = JSON.parse(companies);
 
@@ -23,23 +23,21 @@ const fs = require('fs');
               "accept": "*/*",
               "accept-language": "en-US,en;q=0.9",
               "content-type": "application/json",
-              "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjI1OTExNzYiLCJhcCI6IjExMzQyMTEzMTQiLCJpZCI6ImNmOWI1NzRjODJkYmNjNDciLCJ0ciI6IjNlYjc3YjRhZGI1ZjNmODQyNmQ4ZjBiZGM1NTY0OTlhIiwidGkiOjE2NjU0OTgyNzQ2MzZ9fQ==",
-              "sec-ch-ua": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"",
+              "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjI1OTExNzYiLCJhcCI6IjExMzQyMTEzMTQiLCJpZCI6IjkzYzZhZjE3NjdlOTlmMDYiLCJ0ciI6ImVmMjU5NDUwODdhZjg4ZDZhOWUxNTNhMGRlZDgwYjBkIiwidGkiOjE2Njg3MzU4OTg1Nzl9fQ==",
+              "sec-ch-ua": "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"",
               "sec-ch-ua-mobile": "?0",
               "sec-ch-ua-platform": "\"macOS\"",
               "sec-fetch-dest": "empty",
               "sec-fetch-mode": "cors",
               "sec-fetch-site": "same-site",
-              "traceparent": "00-3eb77b4adb5f3f8426d8f0bdc556499a-cf9b574c82dbcc47-01",
-              "tracestate": "2591176@nr=0-1-2591176-1134211314-cf9b574c82dbcc47----1665498274636",
+              "traceparent": "00-ef25945087af88d6a9e153a0ded80b0d-93c6af1767e99f06-01",
+              "tracestate": "2591176@nr=0-1-2591176-1134211314-93c6af1767e99f06----1668735898579",
               "Referer": "https://theorg.com/",
               "Referrer-Policy": "strict-origin-when-cross-origin"
             },
             "body": `{\"operationName\":\"exploreCompanies\",\"variables\":{\"countries\":[\"US\"],\"categories\":[\"${industry_id}\"\],\"employeeRanges\":[${comp_size}],\"offset\":${(page - 1) * perPage},\"limit\":${perPage}},\"query\":\"query exploreCompanies($countries: [String!], $categories: [String!], $employeeRanges: [String!], $limit: Int!, $offset: Int!) {\\n  exploreCompanies(\\n    countries: $countries\\n    categories: $categories\\n    employeeRanges: $employeeRanges\\n    limit: $limit\\n    offset: $offset\\n  ) {\\n    paging {\\n      total\\n      pages\\n      current\\n      __typename\\n    }\\n    results {\\n      company {\\n        id\\n        slug\\n        name\\n        logoImage {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        description\\n        positionCount\\n        verification {\\n          verificationType\\n          __typename\\n        }\\n        adminLocked\\n        __typename\\n      }\\n      following\\n      id\\n      positionExamples {\\n        slug\\n        image {\\n          uri\\n          ext\\n          versions\\n          endpoint\\n          prevailingColor\\n          placeholderDataUrl\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}`,
             "method": "POST"
           });
-
-
         const json = await res.json();
         return json["data"]["exploreCompanies"]["results"];
     }
@@ -66,6 +64,8 @@ const fs = require('fs');
                                                         "description":pageResults[i]["company"]["description"],
                                                         "positionExamples":pageResults[i]["positionExamples"] // previews only give 3 examples instead of the whole chart
                                                         }});
+                        // dataRes.companies.push({"preview": {"name":pageResults[i]["company"]["name"]}});
+
                         count++;
                     }
                 }
@@ -87,7 +87,7 @@ const fs = require('fs');
     const desired_entries = 250000;
     for (let i = 0; i < comp_sizes.length; i++) {
         for (let j = 0; j < industries.length; j++) {
-            total_count += await scrape_one_url(comp_sizes[i], industries[i]["id"]);
+            total_count += await scrape_one_url(comp_sizes[i], industries[j]["id"]);
             console.log(`i = ${i}, j=${j}, total_count = ${total_count}`)
             if (total_count > desired_entries) {
                 break;

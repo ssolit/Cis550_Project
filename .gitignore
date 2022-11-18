@@ -1,9 +1,16 @@
 /TheOrg_scraping/TO_company_names.json
 /TheOrg_scraping/TO_company_previews.json
+/TheOrg_scraping/TO_company_previews_2.json
 /TheOrg_scraping/TO_company_previews(old).json
+
 /TheOrg_scraping/TO_OrgCharts.json
+/TheOrg_scraping/orgCharts_US_10-500e.json
+
+
 /TheOrg_scraping/TO_junk_files/company_names
 
 /Handshake_scraping/HS_companies.JSON
 /Handshake_scraping/HS_postings.JSON
 
+.DS_Store
+TheOrg_scraping/.DS_Store
