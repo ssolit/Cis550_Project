@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { exit } = require('process');
 
 (async function() {
     const save_path = "orgCharts_US_10-500e.json"; // change file path here. Remember to put {"orgCharts":[]} in it if needed
@@ -10,58 +11,55 @@ const fs = require('fs');
     async function fetchCompInfo(comp_name) {
       // note: these fetch calls go stale. The _next/data/ part of the url, newrelic, and cookie all change
       // To replace it:
-        // 1) copy a fresh Node.js fetch. It should be from a page like https://theorg.com/org/flat-mx/org-chart, copy the the org-chart.json fetch
+        // 0) make sure the save_file is set up right (see line 4)
+        // 1) copy the graphql Node.js fetch. It should be from a page like https://theorg.com/org/flat-mx/org-chart/full-screen and its preview should start with data{data{company{...}}}
         // 2) delete the "if-none-match" header if its there
-        // 3} replace the place where a company name appears (twice in url, once in referer) with ${comp_name} and "" with ``
-        const res = await fetch(`https://theorg.com/_next/data/cTVimb0McZ0qVcefpLODn/org/${comp_name}/org-chart.json?companySlug=${comp_name}`, {
-          "headers": {
-            "accept": "*/*",
-            "accept-language": "en-US,en;q=0.9",
-            "if-none-match": "W/\"3gzihf610v83oy\"",
-            "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjI1OTExNzYiLCJhcCI6IjExMzQyMTEzMTQiLCJpZCI6IjMwOWY4Yjk0MGUyNDhmM2EiLCJ0ciI6IjE1NjFhYjA5MDRlYTE4NzQ4MThmZDhhMDJmMGNiZWYxIiwidGkiOjE2Njg3MzcyMDkzMjZ9fQ==",
-            "purpose": "prefetch",
-            "sec-ch-ua": "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"macOS\"",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "traceparent": "00-1561ab0904ea1874818fd8a02f0cbef1-309f8b940e248f3a-01",
-            "tracestate": "2591176@nr=0-1-2591176-1134211314-309f8b940e248f3a----1668737209326",
-            "x-nextjs-data": "1",
-            "cookie": "CookieConsent={stamp:%27-1%27%2Cnecessary:true%2Cpreferences:true%2Cstatistics:true%2Cmarketing:true%2Cver:1%2Cutc:1668735867279%2Cregion:%27US%27}; _gcl_au=1.1.13360875.1668735867; _gid=GA1.2.1126915202.1668735868; ln_or=d; _fbp=fb.1.1668735867647.498650928; __hstc=3035439.8ba94a8b874a164241a16a8014ea050a.1668735867760.1668735867760.1668735867760.1; hubspotutk=8ba94a8b874a164241a16a8014ea050a; __hssrc=1; _hjFirstSeen=1; _hjSession_1219630=eyJpZCI6IjcyNTlhMDk2LWRlODctNGI3Mi04ZWQ2LWVlNDYyMzE5NjMyMSIsImNyZWF0ZWQiOjE2Njg3MzU4Njc3ODQsImluU2FtcGxlIjp0cnVlfQ==; _hjAbsoluteSessionInProgress=0; AMP_MKTG_261f38a0f0=JTdCJTdE; _hjSessionUser_1219630=eyJpZCI6ImU5OTBmNWU3LTgzYzgtNTlmMy05MTQ5LWQwZGEyODRlZGE4MyIsImNyZWF0ZWQiOjE2Njg3MzU4Njc3MzYsImV4aXN0aW5nIjp0cnVlfQ==; _ga_5NXQ655FGP=GS1.1.1668735867.1.1.1668737207.0.0.0; _ga=GA1.2.1309533542.1668735867; _gat=1; AMP_261f38a0f0=JTdCJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJkZXZpY2VJZCUyMiUzQSUyMjRiYmQyZjA1LTFkNzItNDc0YS1hMDcwLWExMWVlMjRhODlkNyUyMiUyQyUyMmxhc3RFdmVudFRpbWUlMjIlM0ExNjY4NzM3MjA3OTY5JTJDJTIyc2Vzc2lvbklkJTIyJTNBMTY2ODczNTg2NzU4OSU3RA==; _hjIncludedInPageviewSample=1; _hjIncludedInSessionSample=0; __hssc=3035439.3.1668735867760",
-            "Referer": `https://theorg.com/org/${comp_name}/org-chart`,
-            "Referrer-Policy": "strict-origin-when-cross-origin"
-          },
-          "body": null,
-          "method": "GET"
-        });
-          // console.log("finishing fetch\n")
+        // 3) edit the "body" - change "" to `` and subsitute the compnay slug (ex flat-mx) with ${comp_name}
+      const res = await fetch("https://prod-graphql-api.theorg.com/graphql", {
+        "headers": {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "content-type": "application/json",
+          "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkJyb3dzZXIiLCJhYyI6IjI1OTExNzYiLCJhcCI6IjExMzQyMTEzMTQiLCJpZCI6Ijg3MDE3YmNlMDI0ZjQxYWIiLCJ0ciI6IjYzODE3YmU2NzEzYzFhNDE5OWRjMDlmMGMyZDk1YWIwIiwidGkiOjE2Njg3OTIzMzU0Mzl9fQ==",
+          "sec-ch-ua": "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-site",
+          "traceparent": "00-63817be6713c1a4199dc09f0c2d95ab0-87017bce024f41ab-01",
+          "tracestate": "2591176@nr=0-1-2591176-1134211314-87017bce024f41ab----1668792335439",
+          "Referer": "https://theorg.com/",
+          "Referrer-Policy": "strict-origin-when-cross-origin"
+        },
+        "body": `{\"operationName\":\"Company\",\"variables\":{\"slug\":\"${comp_name}\"},\"query\":\"query Company($slug: String!) {\\n  company(slug: $slug) {\\n    ...FullCompany\\n    __typename\\n  }\\n}\\n\\nfragment FullCompany on Company {\\n  id\\n  name\\n  slug\\n  extensions\\n  logoImage {\\n    ...ImageFragment\\n    __typename\\n  }\\n  social {\\n    ...CompanySocialFragment\\n    __typename\\n  }\\n  location {\\n    ...CompanyLocation\\n    __typename\\n  }\\n  description\\n  type\\n  industry\\n  status\\n  private\\n  teams {\\n    id\\n    __typename\\n  }\\n  meta {\\n    ...MetaFragment\\n    __typename\\n  }\\n  nodes {\\n    ...PositionNode\\n    __typename\\n  }\\n  stats {\\n    ...CompanyStats\\n    __typename\\n  }\\n  verification {\\n    verificationType\\n    __typename\\n  }\\n  adminLocked\\n  stage\\n  companyValues {\\n    ...CompanyValue\\n    __typename\\n  }\\n  imageGallery {\\n    ...ImageFragment\\n    __typename\\n  }\\n  testimonials {\\n    ...CompanyTestimonialConnection\\n    __typename\\n  }\\n  industries {\\n    ...CompanyIndustryFragment\\n    __typename\\n  }\\n  lastUpdate\\n  permissionSettings {\\n    companyId\\n    restrictMembersFromEditing\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment ImageFragment on Image {\\n  endpoint\\n  ext\\n  placeholderDataUrl\\n  prevailingColor\\n  uri\\n  versions\\n  __typename\\n}\\n\\nfragment CompanySocialFragment on CompanySocial {\\n  twitterUrl\\n  linkedInUrl\\n  facebookUrl\\n  websiteUrl\\n  __typename\\n}\\n\\nfragment CompanyLocation on CompanyLocation {\\n  id\\n  street\\n  postalCode\\n  city\\n  subLocality\\n  country\\n  countryIso\\n  state\\n  locationString\\n  isPrimary\\n  __typename\\n}\\n\\nfragment MetaFragment on CompanyMeta {\\n  noIndex\\n  importanceScore\\n  tags\\n  __typename\\n}\\n\\nfragment PositionNode on OrgChartStructureNode {\\n  id\\n  title\\n  leafMember {\\n    ...FlatPositionFragment\\n    __typename\\n  }\\n  containingNodeId\\n  node {\\n    ... on Vacant {\\n      job {\\n        id\\n        slug\\n        title\\n        location {\\n          city\\n          state\\n          country\\n          __typename\\n        }\\n        atsProvider {\\n          provider\\n          __typename\\n        }\\n        createdOn\\n        jobFunction\\n        remote\\n        manager {\\n          ... on ChartNodeGroup {\\n            positions {\\n              ... on PositionOrgChartPosition {\\n                positionId\\n                fullName\\n                profileImage {\\n                  ...ImageFragment\\n                  __typename\\n                }\\n                __typename\\n              }\\n              __typename\\n            }\\n            __typename\\n          }\\n          ... on ChartNodeSingular {\\n            positionId\\n            position {\\n              ... on PositionOrgChartPosition {\\n                profileImage {\\n                  ...ImageFragment\\n                  __typename\\n                }\\n                fullName\\n                __typename\\n              }\\n              __typename\\n            }\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n  order\\n  parentId\\n  section\\n  type\\n  __typename\\n}\\n\\nfragment FlatPositionFragment on FlatPosition {\\n  id\\n  slug\\n  fullName\\n  role\\n  roleFunction\\n  roleAutoFunction\\n  description\\n  parentPositionId\\n  profileImage {\\n    ...ImageFragment\\n    __typename\\n  }\\n  social {\\n    ...UserSocialFragment\\n    __typename\\n  }\\n  isAdviser\\n  group {\\n    ...PositionGroupFragment\\n    __typename\\n  }\\n  companyStartDate {\\n    day\\n    month\\n    year\\n    __typename\\n  }\\n  roleStartDate {\\n    day\\n    month\\n    year\\n    __typename\\n  }\\n  location {\\n    ...CompanyLocation\\n    __typename\\n  }\\n  invitedAt\\n  remote\\n  lastUpdate\\n  pronoun\\n  invitedAt\\n  claimedBy\\n  __typename\\n}\\n\\nfragment UserSocialFragment on UserSocial {\\n  twitterUrl\\n  linkedInUrl\\n  facebookUrl\\n  websiteUrl\\n  __typename\\n}\\n\\nfragment PositionGroupFragment on PositionGroup {\\n  id\\n  name\\n  __typename\\n}\\n\\nfragment CompanyStats on CompanyStats {\\n  tags\\n  employeeRange\\n  followerCount\\n  positionCount\\n  jobsCount\\n  teamsCount\\n  announcementsCount\\n  following\\n  promptDismissals\\n  latestFundingRound {\\n    id\\n    fundingType\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment CompanyValue on CompanyValue {\\n  id\\n  value\\n  description\\n  __typename\\n}\\n\\nfragment CompanyTestimonialConnection on CompanyTestimonialConnection {\\n  testimonial {\\n    id\\n    question\\n    answer\\n    __typename\\n  }\\n  position {\\n    id\\n    slug\\n    fullName\\n    profileImage {\\n      ...ImageFragment\\n      __typename\\n    }\\n    role\\n    parentPositionId\\n    isAdviser\\n    lastUpdate\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment CompanyIndustryFragment on CompanyTag {\\n  id\\n  title\\n  __typename\\n}\\n\"}`,
+        "method": "POST"
+      });
+      // console.log("finishing fetch\n")
 
-          const json = await res.json();
-          return json;
+      const json = await res.json();
+      return json;
     }
 
     async function scrape_one_chart(c_name) {
         const result = await fetchCompInfo(c_name);
-        if (result == undefined || result["pageProps"] == undefined) {
+        if (result == undefined || result["data"] == undefined) {
           console.log(`scrape failed: undefined. failure point: ${c_name}`)
           console.log()
           return
         }
 
-        // let chart = {"initialCompany":result["pageProps"]["initialCompany"]} // Has all info, but a lot not relevant. Also hard to read
-        let clean_chart = {"CompanyName":result["pageProps"]["initialCompany"]["name"],
+        let clean_chart = {"CompanyName":result["data"]["company"]["name"],
                               "stats": {
-                                "social": result["pageProps"]["initialCompany"]["social"],
-                                "location": result["pageProps"]["initialCompany"]["location"],
-                                "description": result["pageProps"]["initialCompany"]["description"],
-                                "employeeRange": result["pageProps"]["initialCompany"]["stats"]["employeeRange"],
-                                "stage":result["pageProps"]["initialCompany"]["stats"]["stage"],
-                                "industries": result["pageProps"]["initialCompany"]["stats"]["industries"],
-                                "lastUpdate": result["pageProps"]["initialCompany"]["stats"]["lastUpdate"],
+                                "social": result["data"]["company"]["social"],
+                                "location": result["data"]["company"]["location"],
+                                "description": result["data"]["company"]["description"],
+                                "employeeRange": result["data"]["company"]["stats"]["employeeRange"],
+                                "stage":result["data"]["company"]["stats"]["stage"],
+                                "industries": result["data"]["company"]["stats"]["industries"],
+                                "lastUpdate": result["data"]["company"]["stats"]["lastUpdate"],
                                 },
-                                "employeeNodes": result["pageProps"]["initialCompany"]["nodes"],
+                                "employeeNodes": result["data"]["company"]["nodes"],
                             }
         orgChartsObj.orgCharts.push(clean_chart)
         await fs.writeFileSync(save_path, JSON.stringify(orgChartsObj), 'utf-8');
@@ -71,7 +69,9 @@ const fs = require('fs');
     let init_i = 13400;
     let print_counter = init_i;
     for (let i = init_i; i < previews["companies"].length; i++) {
+      console.log("here!!!\n");
       let c_name = previews["companies"][i]["preview"]["slug"]
+      // console.log(c_name + " " + i + "\n");
       await scrape_one_chart(c_name)
       print_counter++;
       if (print_counter%100 == 0) {
