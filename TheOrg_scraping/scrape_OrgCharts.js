@@ -69,7 +69,6 @@ const { exit } = require('process');
     let init_i = 13400;
     let print_counter = init_i;
     for (let i = init_i; i < previews["companies"].length; i++) {
-      console.log("here!!!\n");
       let c_name = previews["companies"][i]["preview"]["slug"]
       // console.log(c_name + " " + i + "\n");
       await scrape_one_chart(c_name)
