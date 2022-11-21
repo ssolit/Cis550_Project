@@ -2,7 +2,7 @@ const fs = require('fs');
 const { exit } = require('process');
 
 (async function() {
-    const save_path = "orgCharts_US_10-500e.json"; // change file path here. Remember to put {"orgCharts":[]} in it if needed
+    const save_path = "orgCharts_US_37-45k.json"; // change file path here. Remember to put {"orgCharts":[]} in it if needed
     const previews_path = "TO_company_previews_2.json"
 
     let previews = JSON.parse(fs.readFileSync(previews_path, 'utf-8'));
@@ -66,11 +66,10 @@ const { exit } = require('process');
     }
 
     console.log("starting scrapes")
-    let init_i = 13400;
+    let init_i = 0;
     let print_counter = init_i;
-    for (let i = init_i; i < previews["companies"].length; i++) {
+    for (let i = init_i; i < 45000; i++) {
       let c_name = previews["companies"][i]["preview"]["slug"]
-      // console.log(c_name + " " + i + "\n");
       await scrape_one_chart(c_name)
       print_counter++;
       if (print_counter%100 == 0) {

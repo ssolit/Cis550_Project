@@ -2,11 +2,15 @@
 /TheOrg_scraping/TO_company_previews.json
 /TheOrg_scraping/TO_company_previews_2.json
 /TheOrg_scraping/TO_company_previews(old).json
+/TheOrg_scraping/TO_previews_ALL.json
 
 /TheOrg_scraping/TO_OrgCharts.json
 /TheOrg_scraping/orgCharts_US_10-500e.json
+/TheOrg_scraping/orgCharts_US_0-16k.json
+/TheOrg_scraping/orgCharts_US_16-37k.json
+/TheOrg_scraping/orgCharts_US_37-45k.json
 
-
+/TheOrg_scraping/TO_company_slugs.csv
 /TheOrg_scraping/TO_junk_files/company_names
 
 /Handshake_scraping/HS_companies.JSON
@@ -14,3 +18,6 @@
 
 .DS_Store
 TheOrg_scraping/.DS_Store
+node_modules
+package-lock.json
+package.json
