@@ -64,7 +64,7 @@ CREATE TABLE HS_Jobs
 
 CREATE TABLE TO_Employees
 (
-    employer_id            int,
+    employee_id            int,
     slug                   varchar(30),
     CompanyName            varchar(50),
     employeeName           varchar(50),
