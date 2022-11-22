@@ -21,8 +21,13 @@ SELECT employer_name\
 FROM handshake_jobs\
 WHERE job_name like \'93%`$\{search_position\}`%\'94;\
 \
+4) Simple: display company information\
+SELECT *\
+FROM to_companies\
+WHERE companyName LIKE '%$\{search_position\}%';\
+\
 5) Simple: Show the list of companies and job opening titles where the job posting is in a specified location and the average early (<5 years of experience) salary at that location meets some threshold. \cf2 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
 \cf2 \cb3 WITH ExpSalaryTable AS (SELECT company, 
 \f1\i AVG
 \f0\i0 (totalyearlycompensation) AS AvgSalary\
@@ -40,9 +45,15 @@ WHERE (location_cities_1 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 \
     OR location_cities_5 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 );\cf4 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
+6) Simple: given job opening, give estimated salary for it\
+SELECT AVG(basesalary)\
+FROM Salary s\
+JOIN HS_Jobs h ON h.employer_name = s.company\
+  AND h.job_name = s.title\
+WHERE h.job_name LIKE '%$\{search_position\}%';\
 \
 7) Complex: Select the names, roles, and descriptions of top ranking people in a company, i.e., the people who are at most 3 degrees of freedom away from the CEO\cf2 \cb3 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
 \cf2 WITH CompanyCEO AS (\
     SELECT employeeId\
     FROM TO_employees\
@@ -74,6 +85,34 @@ FROM TO_employees\
 JOIN AllDof3Employees ON TO_employees.employeeId = AllDof3Employees.employeeId;\
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
+8) Complex: Similar people recommendation: select 5 people within 2 degrees of freedom from person with similar job role to user\
+WITH deg0 AS (\
+    SELECT employeeId\
+    FROM TO_employees\
+    WHERE role LIKE '%\{search_position\}%'\
+    LIMIT 1\
+    ),\
+    deg1 AS (\
+        SELECT employeeId\
+        FROM TO_orgcharts\
+        JOIN deg0 ON deg0.employeeId = TO_orgcharts.parentId\
+        JOIN deg0 ON deg0.employeeId = TO_orgcharts.employeeId\
+    ),\
+    deg2 AS (\
+        SELECT employeeId\
+        FROM TO_orgcharts\
+        JOIN deg1 ON deg1.employeeId = TO_orgcharts.parentId\
+        JOIN deg1 ON deg1.employeeId = TO_orgcharts.employeeId\
+    )\
+    alldegs AS (\
+            SELECT * FROM deg0\
+            UNION (SELECT * FROM deg1)\
+            UNION (SELECT * FROM deg2)\
+    )\
+SELECT employeeName\
+FROM TO_employees\
+JOIN alldegs ON TO_employees.employeeId = alldegs.employeeId\
+LIMIT 5;\
 \
 9) Complex: Rank companies according to highest paying open positions with number of employees in a certain range.\
 SELECT L.company\
