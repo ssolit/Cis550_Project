@@ -1,0 +1,76 @@
+CREATE TABLE Salary
+(
+    idx                     int,
+    company                 varchar(64),
+    level                   varchar(20),
+    title                   varchar(64),
+    totalyearlycompensation int,
+    yearsofexperience       float4,
+    yearsatcompany          float4,
+    basesalary              int,
+    stockgrantvalue         int,
+    bonus                   int,
+    year                    int,
+    city                    varchar(30),
+    state                   varchar(30),
+    country                 varchar(30),
+    PRIMARY KEY (idx)
+);
+
+CREATE TABLE HS_Jobs
+(
+    id                     int,
+    apply_start            DATETIME,
+    created_at             DATETIME,
+    updated_at             DATETIME,
+    employer_logo          varchar(200),
+    employer_name          varchar(64),
+    employer_id            int,
+    employment_type_name   varchar(20),
+    expiration_date        DATETIME,
+    job_id                 int,
+    job_name               varchar(64),
+    duration               varchar(64),
+    employer_industry_id   int,
+    employer_industry_name varchar(64),
+    employer_logo_url      varchar(200),
+    job_type_id            int,
+    job_type_name          varchar(64),
+    salary_type_id         int,
+    salary_type_name       varchar(30),
+    text_description       varchar(1000),
+    title                  varchar(30),
+    work_study             BOOLEAN,
+    remote                 BOOLEAN,
+    location_cities_1      varchar(30),
+    location_states_1      varchar(30),
+    location_countries_1   varchar(30),
+    location_cities_2      varchar(30),
+    location_states_2      varchar(30),
+    location_countries_2   varchar(30),
+    location_cities_3      varchar(30),
+    location_states_3      varchar(30),
+    location_countries_3   varchar(30),
+    location_cities_4      varchar(30),
+    location_states_4      varchar(30),
+    location_countries_4   varchar(30),
+    location_cities_5      varchar(30),
+    location_states_5      varchar(30),
+    location_countries_5   varchar(30),
+    PRIMARY KEY (id)
+);
+# employment_type_name 'Full-Time', 'Part-Time'
+# duration 'Permanent', 'Temporary / Seasonal'
+
+CREATE TABLE TO_Employees
+(
+    employer_id            int,
+    slug                   varchar(30),
+    CompanyName            varchar(50),
+    employeeName           varchar(50),
+    role                   varchar(30),
+    roleAutoFunction       varchar(10),
+    description            varchar(500),
+    remote                 BOOLEAN,
+    PRIMARY KEY (employer_id)
+);
