@@ -9,7 +9,12 @@
 \deftab560
 \pard\pardeftab560\slleading20\partightenfactor0
 
-\f0\fs26 \cf0 2) Simple: companies that have a certain position in it.\
+\f0\fs26 \cf0 1) Simple: find all employees who work under a certain person\
+SELECT employee_id\
+FROM TO_Employees JOIN worksUnder wU ON TO_Employees.employee_id = wU.employee_id\
+WHERE parent_id = `$\{searchID\}`;\
+\
+2) Simple: companies that have a certain position in it.\
 SELECT CompanyName\
 FROM to_employees\
 WHERE role LIKE \'93%`$\{search_position\}`%\'94;\
@@ -123,7 +128,20 @@ WHERE EXISTS (SELECT CompanyName\
 WHERE H.job_type_name =\'91Job\'92\
 ORDER BY L.salary DESC;\
 \
-\
+10) Complex: Given a person, find the highest paying open position with the same title as that person\
+WITH eq_role_postings AS (\
+    SELECT job_id, TO_Employees.role AS role, salary, company, employee_id\
+    FROM ((SELECT HS_Jobs.id AS job_id, HS_Jobs.title AS role, basesalary + bonus AS salary, company\
+          FROM HS_Jobs JOIN Salary S\
+            ON HS_Jobs.title = S.title) open_sals\
+        JOIN TO_Employees ON TO_Employees.role = open_sals.role)\
+)\
+SELECT job_id\
+FROM eq_role_postings\
+WHERE salary >= ALL (\
+    SELECT salary\
+    FROM eq_role_postings\
+);\
 \
 \
 \
