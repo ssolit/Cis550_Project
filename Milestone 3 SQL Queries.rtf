@@ -129,6 +129,23 @@ WHERE H.job_type_name =\'91Job\'92\
 ORDER BY L.salary DESC;\
 \
 10) Complex: Given a person, find the highest paying open position with the same title as that person\
+#Unoptimized, doesn\'92t complete after 30+ seconds\
+WITH eq_role_postings AS (\
+     SELECT job_id, TO_Employees.role AS role, salary, company\
+     FROM ((SELECT HS_Jobs.id AS job_id, HS_Jobs.title AS role, basesalary + bonus AS salary, company\
+           FROM HS_Jobs JOIN Salary S\
+             ON HS_Jobs.title = S.title) open_sals\
+         JOIN TO_Employees ON TO_Employees.role = open_sals.role)\
+     WHERE employee_id = @empl_id\
+ )\
+ SELECT *\
+ FROM eq_role_postings\
+ WHERE salary >= ALL (\
+     SELECT salary\
+     FROM eq_role_postings\
+ );\
+\
+#optimized, completes after ~1 second\
 WITH eq_role_postings AS (SELECT open_sals.role, job_id, salary, company\
                           FROM (SELECT *\
                                 FROM (SELECT role\
