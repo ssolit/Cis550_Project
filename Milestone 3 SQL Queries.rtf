@@ -92,31 +92,31 @@ JOIN AllDof3Employees ON TO_employees.employeeId = AllDof3Employees.employeeId;\
 \cf0 \cb1 \
 8) Complex: Similar people recommendation: select 5 people within 2 degrees of freedom from person with similar job role to user\
 WITH deg0 AS (\
-    SELECT employeeId\
-    FROM TO_employees\
-    WHERE role LIKE '%\{search_position\}%'\
+    SELECT employee_id\
+    FROM TO_Employees\
+    WHERE role = @search_position\
     LIMIT 1\
     ),\
     deg1 AS (\
-        SELECT employeeId\
-        FROM TO_orgcharts\
-        JOIN deg0 ON deg0.employeeId = TO_orgcharts.parentId\
-        JOIN deg0 ON deg0.employeeId = TO_orgcharts.employeeId\
+        SELECT t1.employee_id\
+        FROM worksUnder\
+        JOIN deg0 t1 ON t1.employee_id = worksUnder.parent_id\
+        JOIN deg0 t2 ON t2.employee_id = worksUnder.employee_id\
     ),\
     deg2 AS (\
-        SELECT employeeId\
-        FROM TO_orgcharts\
-        JOIN deg1 ON deg1.employeeId = TO_orgcharts.parentId\
-        JOIN deg1 ON deg1.employeeId = TO_orgcharts.employeeId\
-    )\
+        SELECT t1.employee_id\
+        FROM worksUnder\
+        JOIN deg1 t1 ON t1.employee_id = worksUnder.parent_id\
+        JOIN deg1 t2 ON t2.employee_id = worksUnder.employee_id\
+    ),\
     alldegs AS (\
             SELECT * FROM deg0\
             UNION (SELECT * FROM deg1)\
             UNION (SELECT * FROM deg2)\
     )\
 SELECT employeeName\
-FROM TO_employees\
-JOIN alldegs ON TO_employees.employeeId = alldegs.employeeId\
+FROM TO_Employees\
+JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id\
 LIMIT 5;\
 \
 9) Complex: Rank companies according to highest paying open positions with number of employees in a certain range.\
