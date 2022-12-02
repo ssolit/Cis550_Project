@@ -32,8 +32,8 @@ WHERE companyName LIKE '%$\{search_position\}%';\
 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf2 \cb3 5) Simple: Show the list of companies and job opening titles where the job posting is in a specified location and the average early (<5 years of experience) salary at that location meets some threshold. \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf2 \cb3 WITH ExpSalaryTable AS (SELECT company, AVG(totalyearlycompensation) AS AvgSalary\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
+\cf2 WITH ExpSalaryTable AS (SELECT company, AVG(totalyearlycompensation) AS AvgSalary\
                         FROM Salary\
                         WHERE yearsofexperience < 5 AND city LIKE 'New York'\
                         GROUP BY company\
@@ -47,7 +47,7 @@ WHERE (location_cities_1 LIKE 'New York'\
     OR location_cities_4 LIKE 'New York'\
     OR location_cities_5 LIKE 'New York');\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
-\cf4 \cb3 \
+\cf4 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
 6) Simple: given job opening, give estimated salary for it\
@@ -58,8 +58,8 @@ JOIN HS_Jobs h ON h.employer_name = s.company\
 WHERE h.job_name LIKE '%$\{search_position\}%';\
 \
 7) Complex: Select the names, roles, and descriptions of top ranking people in a company, i.e., the people who are at most 3 degrees of freedom away from the CEO\cf2 \cb3 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf2 \cb3 WITH CompanyCEO AS (\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
+\cf2 WITH CompanyCEO AS (\
     SELECT employee_id\
     FROM TO_Employees\
     WHERE CompanyName LIKE 'Neuralink' AND role LIKE '%CEO%'\
@@ -89,7 +89,7 @@ SELECT employeeName AS Name, role AS Role, description AS Description\
 FROM TO_Employees\
 JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id;\
 \pard\pardeftab560\slleading20\partightenfactor0
-\cf2 \cb3 \
+\cf2 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
 8) Complex: Similar people recommendation: select 5 people within 2 degrees of freedom from person with similar job role to user\
