@@ -1,6 +1,5 @@
 {\rtf1\ansi\ansicpg1252\cocoartf2639
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Italic;\f2\fnil\fcharset0 HelveticaNeue-Bold;
-}
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 HelveticaNeue-Bold;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red191\green100\blue38;
 }
 {\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\csgray\c0\c0;\csgenericrgb\c74902\c39216\c14902;
@@ -31,23 +30,24 @@ SELECT *\
 FROM to_companies\
 WHERE companyName LIKE '%$\{search_position\}%';\
 \
-5) Simple: Show the list of companies and job opening titles where the job posting is in a specified location and the average early (<5 years of experience) salary at that location meets some threshold. \cf2 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
-\cf2 \cb3 WITH ExpSalaryTable AS (SELECT company, 
-\f1\i AVG
-\f0\i0 (totalyearlycompensation) AS AvgSalary\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 \cb3 5) Simple: Show the list of companies and job opening titles where the job posting is in a specified location and the average early (<5 years of experience) salary at that location meets some threshold. \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf2 \cb3 WITH ExpSalaryTable AS (SELECT company, AVG(totalyearlycompensation) AS AvgSalary\
                         FROM Salary\
-                        WHERE yearsofexperience < 5 AND city LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 \
+                        WHERE yearsofexperience < 5 AND city LIKE 'New York'\
                         GROUP BY company\
-                        HAVING AvgSalary >\cf0 \cb1 \'93 \'91$\{salary_thresh\}\'92\'94\cf2 \cb3 )\
+                        HAVING AvgSalary > 10000)\
 SELECT employer_name AS Company, job_name AS JobName\
 FROM HS_Jobs\
-JOIN Salary ON HS_Jobs.employer_name = Salary.company\
-WHERE (location_cities_1 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 \
-    OR location_cities_2 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 \
-    OR location_cities_3 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 \
-    OR location_cities_4 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 \
-    OR location_cities_5 LIKE \cf0 \cb1 \'93%`$\{city_name\}`%\'94\cf2 \cb3 );\cf4 \
+JOIN ExpSalaryTable ON HS_Jobs.employer_name = ExpSalaryTable.company\
+WHERE (location_cities_1 LIKE 'New York'\
+    OR location_cities_2 LIKE 'New York'\
+    OR location_cities_3 LIKE 'New York'\
+    OR location_cities_4 LIKE 'New York'\
+    OR location_cities_5 LIKE 'New York');\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
+\cf4 \cb3 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
 6) Simple: given job opening, give estimated salary for it\
@@ -58,26 +58,26 @@ JOIN HS_Jobs h ON h.employer_name = s.company\
 WHERE h.job_name LIKE '%$\{search_position\}%';\
 \
 7) Complex: Select the names, roles, and descriptions of top ranking people in a company, i.e., the people who are at most 3 degrees of freedom away from the CEO\cf2 \cb3 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0
-\cf2 WITH CompanyCEO AS (\
-    SELECT employeeId\
-    FROM TO_employees\
-    WHERE CompanyName LIKE 'Microsoft' AND role LIKE '%CEO%'\
-),\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf2 \cb3 WITH CompanyCEO AS (\
+    SELECT employee_id\
+    FROM TO_Employees\
+    WHERE CompanyName LIKE 'Neuralink' AND role LIKE '%CEO%'\
+    ),\
     Dof1 AS (\
-        SELECT employeeId\
-        FROM TO_orgcharts\
-        JOIN CompanyCEO ON TO_orgcharts.parentId = CompanyCeo.employeeId\
+        SELECT worksUnder.employee_id\
+        FROM worksUnder\
+        JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id\
     ),\
     Dof2 AS (\
-        SELECT employeeId\
-        FROM TO_orgcharts\
-        JOIN Dof1 ON Dof1.employeeId = TO_orgcharts.parentId\
+        SELECT worksUnder.employee_id\
+        FROM worksUnder\
+        JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id\
     ),\
     Dof3 AS (\
-        SELECT employeeId\
-        FROM TO_orgcharts\
-        JOIN Dof2 ON Dof2.employeeId = TO_orgcharts.parentId\
+        SELECT worksUnder.employee_id\
+        FROM worksUnder\
+        JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id\
         ),\
     AllDof3Employees AS (\
         SELECT * FROM CompanyCEO\
@@ -86,8 +86,10 @@ WHERE h.job_name LIKE '%$\{search_position\}%';\
         UNION (SELECT * FROM Dof3)\
     )\
 SELECT employeeName AS Name, role AS Role, description AS Description\
-FROM TO_employees\
-JOIN AllDof3Employees ON TO_employees.employeeId = AllDof3Employees.employeeId;\
+FROM TO_Employees\
+JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id;\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 \cb3 \
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
 8) Complex: Similar people recommendation: select 5 people within 2 degrees of freedom from person with similar job role to user\
@@ -177,7 +179,7 @@ AWS Database info\
 db instance identifier: companies-instance\
 master username: companiesadmin\
 masterpassword: grapes!!
-\f2\b\fs32 \
+\f1\b\fs32 \
 
 \f0\b0\fs26 Endpoint: companies-instance.cikaustfuy1j.us-east-1.rds.amazonaws.com\
 Port: 3306}
