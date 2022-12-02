@@ -95,19 +95,19 @@ WITH deg0 AS (\
     SELECT employee_id\
     FROM TO_Employees\
     WHERE role = @search_position\
-    LIMIT 1\
+    LIMIT 5\
     ),\
     deg1 AS (\
-        SELECT t1.employee_id\
-        FROM worksUnder\
-        JOIN deg0 t1 ON t1.employee_id = worksUnder.parent_id\
-        JOIN deg0 t2 ON t2.employee_id = worksUnder.employee_id\
+        SELECT employee_id\
+        FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss\
+        UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)\
+        LIMIT 5\
     ),\
     deg2 AS (\
-        SELECT t1.employee_id\
-        FROM worksUnder\
-        JOIN deg1 t1 ON t1.employee_id = worksUnder.parent_id\
-        JOIN deg1 t2 ON t2.employee_id = worksUnder.employee_id\
+        SELECT employee_id\
+        FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss\
+        UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)\
+        LIMIT 5\
     ),\
     alldegs AS (\
             SELECT * FROM deg0\
@@ -117,6 +117,7 @@ WITH deg0 AS (\
 SELECT employeeName\
 FROM TO_Employees\
 JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id\
+ORDER BY employeeName\
 LIMIT 5;\
 \
 9) Complex: Rank companies according to highest paying open positions with number of employees in a certain range.\
