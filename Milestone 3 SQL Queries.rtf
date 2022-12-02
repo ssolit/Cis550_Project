@@ -120,11 +120,11 @@ JOIN alldegs ON TO_employees.employeeId = alldegs.employeeId\
 LIMIT 5;\
 \
 9) Complex: Rank companies according to highest paying open positions with number of employees in a certain range.\
-SELECT S.company\
+SELECT DISTINCT(S.company)\
 FROM Salary S JOIN HS_Jobs H ON S.company = H.employer_name\
 WHERE EXISTS (SELECT CompanyName\
-	FROM TO_companies\
-	WHERE employeeSizeRange = @employee_range)\
+	FROM TO_companies C\
+	WHERE C.CompanyName = S.company AND employeeSizeRange = @employee_range)\
 AND H.job_type_name ="Job"\
 ORDER BY S.basesalary + S.bonus DESC;\
 \
