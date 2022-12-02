@@ -120,13 +120,15 @@ JOIN alldegs ON TO_employees.employeeId = alldegs.employeeId\
 LIMIT 5;\
 \
 9) Complex: Rank companies according to highest paying open positions with number of employees in a certain range.\
-SELECT L.company\
-FROM levels L JOIN handshake_jobs H ON L.company = H.employer_name\
+SELECT S.company\
+FROM Salary S JOIN HS_Jobs H ON S.company = H.employer_name\
 WHERE EXISTS (SELECT CompanyName\
-	FROM companies \
-	WHERE employeeSizeRange =\'93\'91$\{employee_range\}\'92\'94)\
-WHERE H.job_type_name =\'91Job\'92\
-ORDER BY L.salary DESC;\
+	FROM TO_companies\
+	WHERE employeeSizeRange = @employee_range)\
+AND H.job_type_name ="Job"\
+ORDER BY S.basesalary + S.bonus DESC;\
+\
+\
 \
 10) Complex: Given a person, find the highest paying open position with the same title as that person\
 #Unoptimized, doesn\'92t complete after 30+ seconds\
