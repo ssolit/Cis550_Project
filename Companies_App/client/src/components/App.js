@@ -6,7 +6,8 @@ import {
 } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import FindFriends from './FindFriends';
-
+import FindCompanies from './FindCompanies';
+import CompanyPage from './CompanyPage';
 export default class App extends React.Component {
 
 	render() {
@@ -23,7 +24,7 @@ export default class App extends React.Component {
 						/>
 						<Route
 							exact
-							path="/dashboard"
+							path="/companies"
 							render={() => (
 								<Dashboard />
 							)}
@@ -34,6 +35,20 @@ export default class App extends React.Component {
 							path="/FindFriends"
 							render={() => (
 								<FindFriends />
+							)}
+						/>
+						<Route
+							exact
+							path="/FindCompanies"
+							render={() => (
+								<FindCompanies />
+							)}
+						/>
+						<Route
+							exact
+							path="/companypage"
+							render={() => (
+								<CompanyPage />
 							)}
 						/>
 					</Switch>

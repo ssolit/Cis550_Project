@@ -3,7 +3,7 @@ import '../style/Dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 
-export default class Dashboard extends React.Component {
+export default class CompanyPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -15,9 +15,9 @@ export default class Dashboard extends React.Component {
   }
 
   // React function that is called when the page load.
-  componentDidMount() {
+  componentDidMount(res, req) {
     // Send an HTTP request to the server.
-    fetch("http://localhost:8081/companies",
+    fetch(`http://localhost:8081/companypage/PILOT`,
       {
         method: 'GET' // The type of HTTP request.
       }).then(res => {
@@ -48,7 +48,7 @@ export default class Dashboard extends React.Component {
 
   render() {
     return (
-      <div className="Dashboard">
+      <div className="CompanyPage">
         <PageNavbar active="companies" />
         <div className="container Company-container">
           <br></br>
