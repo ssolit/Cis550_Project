@@ -35,16 +35,16 @@
 	box-sizing: border-box;
 	border-radius: 20px;
 	outline: none;
-	background: #bd54a4;
+	background: #226f54;
 	color: #fff;
 	cursor: pointer;
 	font-size: 12px;
   }
   
   .input-container .submit-btn:hover {
-	background: #c561ae;
+	background: #2B8A69;
   }
   
   .input-container .submit-btn:active {
-	background: #d86bbe;
+	background: #226f54;
   }
