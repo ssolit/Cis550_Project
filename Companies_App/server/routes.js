@@ -111,9 +111,14 @@ function getEmployees(req, res) {
 function getEmployeeFromID(req, res) {
   inputSearch = req.params.id;
   var query = `
-    SELECT employee_id, employeeName, CompanyName, role
-    FROM TO_Employees
-    WHERE employee_id= ${inputSearch}
+  SELECT employee_id, employeeName, role, description, 
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM TO_Employees
+  WHERE employee_id = ${inputSearch}
   `;
   
   connection.query(query, function (err, rows, fields) {

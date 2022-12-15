@@ -127,7 +127,7 @@ export default class FindEmployees extends React.Component {
 
 				<div className="container recommendations-container">
 					<br></br>
-					<div className="jumbotron findFriend-headspace">
+					<div className="jumbotron findFriend-headspace"> {/* FindEmployees) big grey container */}
 						<div className="h5">Find Employees</div>
 						<div className="input-container">
 							<input type='text' placeholder="Employee Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />

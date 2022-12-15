@@ -38,6 +38,15 @@ const employeeColumns = [
     }
 ]
 
+const specificEmployeeColumns = [...employeeColumns].append(
+	{
+		title: 'Remote',
+		dataIndex: 'remote',
+		key: 'remote',
+		// sorter: (a, b) => a.role.localeCompare(b.role),
+	}
+)
+
 export default class EmployeePage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -50,6 +59,7 @@ export default class EmployeePage extends React.Component {
 			// foundEmployees: [],
 			// rawfoundEmployees: [],
 			similarEmployees: [],
+			employeeDetails: [],
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -59,6 +69,21 @@ export default class EmployeePage extends React.Component {
 
 	componentDidMount() {
 		console.log("in EmployeePage componentDidMount. wait 5 sec")
+		fetch(`http://localhost:8081/employeeFromId/${this.state.e_id}`,
+			{
+				method: "GET"
+			}).then(res => {
+				return res.json();
+			}, err => {
+				console.log(err);
+			}).then(emplDetails => {
+				this.setState({
+					employeeDetails: emplDetails,
+				})
+				console.log("this.state.employeeDetails: ");
+				console.log(this.state.employeeDetails)
+			}
+		);
 		fetch(`http://localhost:8081/employeesSimilar/${this.state.e_id}`,
 			{
 				method: "GET"
@@ -70,9 +95,12 @@ export default class EmployeePage extends React.Component {
 				this.setState({
 					similarEmployees: simEmplList,
 				})
-				console.log("this.state.similarEmployees: ");
-				console.log(this.state.similarEmployees)
-			});
+				// console.log("this.state.similarEmployees: ");
+				// console.log(this.state.similarEmployees)
+			}
+		);
+
+
 	}
 
 	handleSearchChange(e) {
@@ -127,24 +155,18 @@ export default class EmployeePage extends React.Component {
 
 				<div className="container recommendations-container">
 					<br></br>
-					<div className="jumbotron findFriend-headspace">
-						<div className="h5">EmployeePage</div>
-						<div className="input-container">
-							<input type='text' placeholder="Employee Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
-							{/* ---- Part 2 (FindEmployees) ---- */}
-							{/* TODO: (5) - Edit button element below */}
-							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
+					<div className="jumbotron findFriend-headspace"> {/* EmployeePage) big grey container */}
+						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+								<h3>Employee Details</h3>
+								<Table dataSource={this.state.employeeDetails} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
-
-						
-
 					</div>
 
 					{/* hyperlinks */}
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 							<h3>Similar Employees</h3>
 							<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-						</div>
+					</div>
 
 					
 
