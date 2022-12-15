@@ -77,11 +77,59 @@ function getJobs(req, res) {
   });
 };
 
+
+function getSimilarEmployees(req, res) {
+  var inputPerson = req.params.employee_id;
+  var query = `WITH desiredRole AS (
+                  SELECT role
+                  FROM TO_Employees
+                  WHERE employee_id = ${inputPerson}
+                  )
+                  deg0 AS (
+                  SELECT employee_id
+                  FROM TO_Employees JOIN desiredRole d ON TO_Employees.role = d.role
+                  LIMIT 5
+                  ),
+                  deg1 AS (
+                      SELECT employee_id
+                      FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss
+                      UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)
+                      LIMIT 5
+                  ),
+                  deg2 AS (
+                      SELECT employee_id
+                      FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss
+                      UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)
+                      LIMIT 5
+                  ),
+                  alldegs AS (
+                          SELECT * FROM deg0
+                          UNION (SELECT * FROM deg1)
+                          UNION (SELECT * FROM deg2)
+                  )
+              SELECT employeeName
+              FROM TO_Employees
+              JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
+              ORDER BY employeeName
+              LIMIT 5`;
+  
+  connection.query(query, function (error, results, fields) {
+    if (error) {
+        console.log(error)
+        res.json({ error: error })
+    } else if (results) {
+      res.json({ results: results })
+    }
+  });
+    
+}
+
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   getAllCompanies: getAllCompanies,
   getCompanies: getCompanies,
   getCompanyPage: getCompanyPage,
-  getJobs: getJobs
-  
+  getJobs: getJobs,
+  getSimilarEmployees: getSimilarEmployees,
+
 }
