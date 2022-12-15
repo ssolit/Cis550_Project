@@ -56,7 +56,7 @@ export default class EmployeePage extends React.Component {
 		this.submitSearch = this.submitSearch.bind(this);
 	}
 
-	componentDidMount() {
+	submitSearch() {
 		console.log("in EmployeePage componentDidMount")
 		var sim = fetch(`http://localhost:8081/employeesSimilar/275`,
 			{
@@ -95,42 +95,42 @@ export default class EmployeePage extends React.Component {
 			})
 	}
 
-	submitSearch() {
-		/* ---- Part 2 (FindEmployees) ---- */
-		// TODO: (4) - Complete the fetch for this function
-		// Hint: Name of search submitted is contained in `this.state.search`.
-		console.log("entered submitSearch")
+	// submitSearch() {
+	// 	/* ---- Part 2 (FindEmployees) ---- */
+	// 	// TODO: (4) - Complete the fetch for this function
+	// 	// Hint: Name of search submitted is contained in `this.state.search`.
+	// 	console.log("entered submitSearch")
 
-		fetch(`http://localhost:8081/employees/${this.state.name}`,
-			{
-				method: "GET"
-			}).then(res => {
-				console.log("submitSearch then 1");
-				return res.json();
-			}, err => {
-				console.log(err);
-			}).then(employeesList => {
-				console.log("submitSearch then 2");
-				console.log(employeesList); //displays your JSON object in the console
-				let employeesDivs = employeesList.map((employee, i) =>
-					/* ---- Part 2 (FindEmployees) ---- */
-					// TODO: (6) - Complete the HTML for this map function
-					<div key={i} className="employeeResults">
-						<div className="name">{employee.employeeName}</div>
-						<div className="name">{employee.CompanyName}</div>
-						<div className="name">{employee.role}</div>
-						{/* <button onClick={this.submitEmployeePage} id="myButton" >Employee Page</button> */}
-					</div>
-				);
+	// 	fetch(`http://localhost:8081/employees/${this.state.name}`,
+	// 		{
+	// 			method: "GET"
+	// 		}).then(res => {
+	// 			console.log("submitSearch then 1");
+	// 			return res.json();
+	// 		}, err => {
+	// 			console.log(err);
+	// 		}).then(employeesList => {
+	// 			console.log("submitSearch then 2");
+	// 			console.log(employeesList); //displays your JSON object in the console
+	// 			let employeesDivs = employeesList.map((employee, i) =>
+	// 				/* ---- Part 2 (FindEmployees) ---- */
+	// 				// TODO: (6) - Complete the HTML for this map function
+	// 				<div key={i} className="employeeResults">
+	// 					<div className="name">{employee.employeeName}</div>
+	// 					<div className="name">{employee.CompanyName}</div>
+	// 					<div className="name">{employee.role}</div>
+	// 					{/* <button onClick={this.submitEmployeePage} id="myButton" >Employee Page</button> */}
+	// 				</div>
+	// 			);
 
-				//This saves our HTML representation of the data into the state, which we can call in our render function
-				this.setState({
-					rawfoundEmployees: employeesList,
-					foundEmployees: employeesDivs
-				});
-				// console.log(this.state.rawfoundEmployees);
-			});
-	}
+	// 			//This saves our HTML representation of the data into the state, which we can call in our render function
+	// 			this.setState({
+	// 				rawfoundEmployees: employeesList,
+	// 				foundEmployees: employeesDivs
+	// 			});
+	// 			// console.log(this.state.rawfoundEmployees);
+	// 		});
+	// }
 
 
 
@@ -160,7 +160,7 @@ export default class EmployeePage extends React.Component {
 
 				<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 							<h3>hypertable</h3>
-							<Table dataSource={this.state.rawfoundEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+							<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
 						
 			</div>
