@@ -57,12 +57,11 @@ export default class EmployeePage extends React.Component {
 	}
 
 	submitSearch() {
-		console.log("in EmployeePage componentDidMount")
+		console.log("in EmployeePage componentDidMount. wait 5 sec")
 		var sim = fetch(`http://localhost:8081/employeesSimilar/275`,
 			{
 				method: "GET"
 			}).then(res => {
-				console.log("submitSearch then 1");
 				return res.json();
 			}, err => {
 				console.log(err);
@@ -72,9 +71,11 @@ export default class EmployeePage extends React.Component {
 				this.setState({
 					similarEmployees: simEmplList,
 				})
+				console.log("this.state.similarEmployees: ");
+				console.log(this.state.similarEmployees)
+
 			});
-		console.log("this.state.similarEmployees: ");
-		console.log(this.state.similarEmployees)
+		
 		
 	}
 
@@ -144,7 +145,7 @@ export default class EmployeePage extends React.Component {
 				<div className="container recommendations-container">
 					<br></br>
 					<div className="jumbotron findFriend-headspace">
-						<div className="h5">Find Employees</div>
+						<div className="h5">EmployeePage</div>
 						<div className="input-container">
 							<input type='text' placeholder="Employee Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
 							{/* ---- Part 2 (FindEmployees) ---- */}
@@ -152,16 +153,19 @@ export default class EmployeePage extends React.Component {
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
 						</div>
 
+						
+
 					</div>
+
+					{/* hyperlinks */}
+					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+							<h3>hypertable</h3>
+							<Table dataSource={this.state.rawfoundEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+						</div>
 
 					
 
 				</div>
-
-				<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<h3>hypertable</h3>
-							<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
-						</div>
 						
 			</div>
 		);

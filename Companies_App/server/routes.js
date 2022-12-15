@@ -126,11 +126,12 @@ function getEmployeeFromID(req, res) {
 
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
+  inputPerson = 275;
   console.log(`in routes.js/getSimilarEmployees. input = ${inputPerson}`)
   var query = `WITH desiredRole AS (
                     SELECT role
                     FROM TO_Employees
-                    WHERE employee_id = @inputPerson
+                    WHERE employee_id = ${inputPerson}
                     ),
                     deg0 AS (
                     SELECT employee_id
