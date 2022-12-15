@@ -66,14 +66,11 @@ export default class EmployeePage extends React.Component {
 			}, err => {
 				console.log(err);
 			}).then(simEmplList => {
-				console.log("simEmplList = ")
-				console.log(simEmplList)
 				this.setState({
 					similarEmployees: simEmplList,
 				})
 				console.log("this.state.similarEmployees: ");
 				console.log(this.state.similarEmployees)
-
 			});
 		
 		
@@ -106,12 +103,10 @@ export default class EmployeePage extends React.Component {
 	// 		{
 	// 			method: "GET"
 	// 		}).then(res => {
-	// 			console.log("submitSearch then 1");
 	// 			return res.json();
 	// 		}, err => {
 	// 			console.log(err);
 	// 		}).then(employeesList => {
-	// 			console.log("submitSearch then 2");
 	// 			console.log(employeesList); //displays your JSON object in the console
 	// 			let employeesDivs = employeesList.map((employee, i) =>
 	// 				/* ---- Part 2 (FindEmployees) ---- */
@@ -160,7 +155,7 @@ export default class EmployeePage extends React.Component {
 					{/* hyperlinks */}
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 							<h3>hypertable</h3>
-							<Table dataSource={this.state.rawfoundEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+							<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
 
 					

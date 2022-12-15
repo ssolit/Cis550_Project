@@ -161,14 +161,19 @@ function getSimilarEmployees(req, res) {
                 ORDER BY employeeName
                 LIMIT 5`;
   
-  connection.query(query, function (error, results, fields) {
-    if (error) {
-        console.log(error)
-        res.json({ error: error })
-    } else if (results) {
-      res.json({ results: results })
+  // connection.query(query, function (err, rows, fields) {
+  //   if (err) console.log(err);
+  //   else {
+  //     res.json(rows);
+  //   }
+  // });
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
     }
   });
+  
 };
 
 // The exported functions, which can be accessed in index.js.
