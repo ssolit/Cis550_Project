@@ -22,7 +22,7 @@ const employeeColumns = [
         dataIndex: 'employeeName',
         key: 'employeeName',
         // sorter: (a, b) => a.employeeName.localeCompare(b.employeeName),
-        render: (text, row) => <a href={`/employees?id=${row.employee_id}`}>{text}</a>
+        render: (text, row) => <a href={`/EmployeePage?id=${row.employee_id}`}>{text}</a>
     },
 	{
         title: 'Company Name',
