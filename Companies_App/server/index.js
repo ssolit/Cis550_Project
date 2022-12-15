@@ -32,6 +32,7 @@ app.get('/jobs/:name', routes.getJobs); // Hint: Replace () => {} with the appro
 
 app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:name', routes.getEmployees);
+app.get('/employeeFromId/:id', routes.getEmployeeFromID)
 // app.get('/employees/:e_id', routes.getSimilarEmployees);
 
 app.listen(8081, () => {

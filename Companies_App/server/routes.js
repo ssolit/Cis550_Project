@@ -108,6 +108,22 @@ function getEmployees(req, res) {
   });
 };
 
+function getEmployeeFromID(req, res) {
+  inputSearch = req.params.id;
+  var query = `
+    SELECT employee_id, employeeName, CompanyName, role
+    FROM TO_Employees
+    WHERE employee_id= ${inputSearch}
+  `;
+  
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
   var query = `WITH desiredRole AS (
@@ -162,6 +178,7 @@ module.exports = {
 
   getAllEmployees: getAllEmployees,
   getEmployees: getEmployees,
+  getEmployeeFromID: getEmployeeFromID,
   getSimilarEmployees: getSimilarEmployees,
 
 }

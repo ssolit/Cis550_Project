@@ -18,7 +18,7 @@ import {
 
 const employeeColumns = [
     {
-        title: 'Employee Name',
+        title: 'takjsdhf Page Employee Name',
         dataIndex: 'employeeName',
         key: 'employeeName',
         // sorter: (a, b) => a.employeeName.localeCompare(b.employeeName),
@@ -31,14 +31,14 @@ const employeeColumns = [
         // sorter: (a, b) => a.CompanyName.localeCompare(b.CompanyName),
     },
 	{
-        title: 'Role',
+        title: 'asdhfklas Page Role',
         dataIndex: 'role',
         key: 'role',
         // sorter: (a, b) => a.role.localeCompare(b.role),
     }
 ]
 
-export default class FindEmployees extends React.Component {
+export default class EmployeePage extends React.Component {
 	constructor(props) {
 		super(props);
 
