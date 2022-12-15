@@ -5,9 +5,9 @@ import {
 	Switch
 } from 'react-router-dom';
 import Dashboard from './Dashboard';
-import FindFriends from './FindFriends';
 import FindCompanies from './FindCompanies';
 import CompanyPage from './CompanyPage';
+import FindJobs from './FindJobs';
 export default class App extends React.Component {
 
 	render() {
@@ -29,14 +29,6 @@ export default class App extends React.Component {
 								<Dashboard />
 							)}
 						/>
-						{/* ---- Part 2 (FindFriends) ---- */}
-						<Route
-							exact
-							path="/FindFriends"
-							render={() => (
-								<FindFriends />
-							)}
-						/>
 						<Route
 							exact
 							path="/FindCompanies"
@@ -49,6 +41,13 @@ export default class App extends React.Component {
 							path="/companypage"
 							render={() => (
 								<CompanyPage />
+							)}
+						/>
+						<Route
+							exact
+							path="/FindJobs"
+							render={() => (
+								<FindJobs />
 							)}
 						/>
 					</Switch>
