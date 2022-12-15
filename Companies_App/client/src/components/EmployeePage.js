@@ -57,9 +57,9 @@ export default class EmployeePage extends React.Component {
 		console.log("e_id: " + this.state.e_id)
 	}
 
-	submitSearch() {
+	componentDidMount() {
 		console.log("in EmployeePage componentDidMount. wait 5 sec")
-		var sim = fetch(`http://localhost:8081/employeesSimilar/${this.state.e_id}`,
+		fetch(`http://localhost:8081/employeesSimilar/${this.state.e_id}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -73,8 +73,6 @@ export default class EmployeePage extends React.Component {
 				console.log("this.state.similarEmployees: ");
 				console.log(this.state.similarEmployees)
 			});
-		
-		
 	}
 
 	handleSearchChange(e) {
@@ -83,7 +81,12 @@ export default class EmployeePage extends React.Component {
 		});
 	}
 
-	getRawSearchResults() {
+	submitSearch() {
+		/* ---- Part 2 (FindEmployees) ---- */
+		// TODO: (4) - Complete the fetch for this function
+		// Hint: Name of search submitted is contained in `this.state.search`.
+		console.log("entered submitSearch")
+
 		fetch(`http://localhost:8081/employees/${this.state.name}`,
 			{
 				method: "GET"
@@ -91,43 +94,27 @@ export default class EmployeePage extends React.Component {
 				return res.json();
 			}, err => {
 				console.log(err);
-			})
+			}).then(employeesList => {
+				console.log(employeesList); //displays your JSON object in the console
+				let employeesDivs = employeesList.map((employee, i) =>
+					/* ---- Part 2 (FindEmployees) ---- */
+					// TODO: (6) - Complete the HTML for this map function
+					<div key={i} className="employeeResults">
+						<div className="name">{employee.employeeName}</div>
+						<div className="name">{employee.CompanyName}</div>
+						<div className="name">{employee.role}</div>
+						{/* <button onClick={this.submitEmployeePage} id="myButton" >Employee Page</button> */}
+					</div>
+				);
+
+				//This saves our HTML representation of the data into the state, which we can call in our render function
+				this.setState({
+					rawfoundEmployees: employeesList,
+					foundEmployees: employeesDivs
+				});
+				// console.log(this.state.rawfoundEmployees);
+			});
 	}
-
-	// submitSearch() {
-	// 	/* ---- Part 2 (FindEmployees) ---- */
-	// 	// TODO: (4) - Complete the fetch for this function
-	// 	// Hint: Name of search submitted is contained in `this.state.search`.
-	// 	console.log("entered submitSearch")
-
-	// 	fetch(`http://localhost:8081/employees/${this.state.name}`,
-	// 		{
-	// 			method: "GET"
-	// 		}).then(res => {
-	// 			return res.json();
-	// 		}, err => {
-	// 			console.log(err);
-	// 		}).then(employeesList => {
-	// 			console.log(employeesList); //displays your JSON object in the console
-	// 			let employeesDivs = employeesList.map((employee, i) =>
-	// 				/* ---- Part 2 (FindEmployees) ---- */
-	// 				// TODO: (6) - Complete the HTML for this map function
-	// 				<div key={i} className="employeeResults">
-	// 					<div className="name">{employee.employeeName}</div>
-	// 					<div className="name">{employee.CompanyName}</div>
-	// 					<div className="name">{employee.role}</div>
-	// 					{/* <button onClick={this.submitEmployeePage} id="myButton" >Employee Page</button> */}
-	// 				</div>
-	// 			);
-
-	// 			//This saves our HTML representation of the data into the state, which we can call in our render function
-	// 			this.setState({
-	// 				rawfoundEmployees: employeesList,
-	// 				foundEmployees: employeesDivs
-	// 			});
-	// 			// console.log(this.state.rawfoundEmployees);
-	// 		});
-	// }
 
 
 
