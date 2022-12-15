@@ -36,9 +36,15 @@ app.get('/companypos/:role', routes.companypos);
 /* company openings */
 app.get('/companyopening/:role', routes.companyopening);
 
-/* company openings */
+/* job openings */
 //app.get('/jobopenings/?Location=:location&Salary=:salary', routes.jobopenings);
 app.get('/jobopenings/', routes.jobopenings);
+
+/* company info */
+app.get('/company/:name', routes.company);
+
+/* company ceo */
+app.get('/companyceo/:name', routes.companyceo);
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);

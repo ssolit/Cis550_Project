@@ -3,10 +3,75 @@ import PageNavbar from './PageNavbar';
 import '../style/FindCompanies.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "shards-ui/dist/css/shards.min.css";
+import { getCompany } from '../fetcher'
 
-import { Form, FormInput, FormGroup } from "shards-react";
+import { Form, FormInput, FormGroup, Card, CardBody } from "shards-react";
 
 import { Container, Row, Col } from 'react-bootstrap';
+
+import { useState } from 'react';
+
+import { Link } from "react-router-dom";
+
+// import Table from '@mui/material/Table';
+// import TableBody from "@mui/material/TableBody";
+// import TableCell from "@mui/material/TableCell";
+// import TableContainer from "@mui/material/TableContainer";
+// import TableHead from "@mui/material/TableHead";
+// import TableRow from "@mui/material/TableRow";
+// import Paper from "@mui/material/Paper";
+
+import {
+    Table,
+    Pagination,
+    Select,
+    Divider,
+    Slider,
+    Rate 
+} from 'antd'
+
+const dataSource = [
+	{
+	  key: '1',
+	  name: 'Mike',
+	  age: 32,
+	  address: '10 Downing Street',
+	},
+	{
+	  key: '2',
+	  name: 'John',
+	  age: 42,
+	  address: '10 Downing Street',
+	},
+  ];
+
+  const columns = [
+	{
+	  title: 'Name',
+	  dataIndex: 'name',
+	  key: 'name',
+	},
+	{
+	  title: 'Age',
+	  dataIndex: 'age',
+	  key: 'age',
+	},
+	{
+	  title: 'Address',
+	  dataIndex: 'address',
+	  key: 'address',
+	},
+  ];
+  
+
+const companyColumns = [
+    {
+        title: 'Name',
+        dataIndex: 'CName',
+        key: 'CName',
+        render: (text, row) => <a href={`/FindCompanies?id=${row.CId}`}>{text}</a>
+    }
+]
 
 export default class FindCompanies extends React.Component {
 	constructor(props) {
@@ -16,11 +81,16 @@ export default class FindCompanies extends React.Component {
 		// and the list of companies of that search.
 		this.state = {
 			name: "",
-			foundCompanies: [],
+			//foundCompanies: [],
+			// queries are working, but they're not populating the table, so testing
+			foundCompanies: [{"CId":5,"CName":"THE CHEMICO GROUP","CCity":"Southfield","CState":"Michigan","CCountry":"United States","Size":"200-500","CDescription":"The Chemico Group is a chemical company providing single integrated solution for the chemical lifecycle."}],
 			roleQuery: "",
 			openingQuery: "",
-			locationQuery:"",
-			salaryQuery:""
+			locationQuery: "",
+			salaryQuery: "",
+			companyInfoQuery: "",
+			selectedCompanyId: window.location.search ? window.location.search.substring(1).split('=')[1] : 0,
+            selectedCompanyDetails: null,
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -121,8 +191,6 @@ export default class FindCompanies extends React.Component {
 					/* ---- Part 2 (FindCompanies) ---- */
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
-						<div className="name">{company.CCity}</div>
-						<div className="name">{}</div>
 					</div>
 				);
 
@@ -132,6 +200,53 @@ export default class FindCompanies extends React.Component {
 				});
 			});
     }
+
+	// for individual companies when you click on the hyperlink
+	// SubmitCompanyInfoQuery(res, req) {
+	// 	// Send an HTTP request to the server.
+	// 	// 1 fetch for 1 query
+	// 	fetch(`http://localhost:8081/company/${this.state.companyInfoQuery}`,
+	// 	  {
+	// 		method: 'GET' // The type of HTTP request.
+	// 	  }).then(res => {
+	// 		// Convert the response data to a JSON.
+	// 		return res.json();
+	// 	  }, err => {
+	// 		// Print the error if there is one.
+	// 		console.log(err);
+	// 	  }).then(companiesList => {
+	
+	// 		// Map each attribute of a company in this.state.people to an HTML element
+	// 		let companiesDivs = companiesList.map((company, i) =>
+	// 		  <div key={i} className="company">
+	// 			<div className="id">{company.CId}</div>
+	// 			<div className="name">{company.CName}</div>
+	// 			<div className="city">{company.CCity}</div>
+	// 		  </div>);
+	
+	// 		// Set the state of the company list to the value returned by the HTTP response from the server.
+	// 		this.setState({
+	// 		  companies: companiesDivs
+	// 		});
+	// 	  }, err => {
+	// 		// Print the error if there is one.
+	// 		console.log(err);
+	// 	  });
+	// }
+
+	componentDidMount() {
+        getCompany(this.state.selectedCompanyId).then(res => {
+            this.setState({ selectedCompanyDetails: res.results })
+        })
+    }
+
+
+
+
+
+
+
+
 
 	submitSearch() {
 		/* ---- Part 2 (FindCompanies) ---- */
@@ -171,9 +286,6 @@ export default class FindCompanies extends React.Component {
 		};
 	}
 
-	// maybe just make 3 separate search buttons, one for each query
-
-
 	render() {
 
 		return (
@@ -184,18 +296,21 @@ export default class FindCompanies extends React.Component {
 					<div className="jumbotron findFriend-headspace">
 					<div className="h5">Find Companies</div>
 						<Row>
+						{/* role query */}
 						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Role</label>
                             <FormInput placeholder="Role" value={this.state.roleQuery} onChange={this.handleRoleQueryChange} />
 							<br></br>
 							<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitRoleQuery}>Submit</button>
                         </FormGroup>
+						{/* opening query */}
 						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Opening</label>
                             <FormInput placeholder="Opening" value={this.state.openingQuery} onChange={this.handleOpeningQueryChange} />
 							<br></br>
 							<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitOpeningQuery}>Submit</button>
                         </FormGroup>
+						{/* salary & city query */}
 						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
 							<Row>
 							<Col>
@@ -217,17 +332,53 @@ export default class FindCompanies extends React.Component {
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
 						</div> */}
 
-						<div className="header-container">
+						{/* <div className="header-container">
 							<div className="headers">
 								<div className="header"><strong>Company</strong></div>
 								<div className="header"><strong>City</strong></div>
 								<div className="header"><strong>State</strong></div>
 							</div>
+						</div> */}
+
+						{/* <div className="results-container" id="results">
+							{this.state.foundCompanies}
+						</div> */}
+
+						<div style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
+							<Table dataSource={this.state.foundCompanies} columns={companyColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+							
+							{/* <Table dataSource={dataSource} columns={columns} />; */}
 						</div>
 
-						<div className="results-container" id="results">
-							{this.state.foundCompanies}
+						<div>
+							<Card>
+								<CardBody>
+									<h5>HELLO</h5>
+								</CardBody>
+							</Card>
 						</div>
+
+						{this.state.selectedCompanyDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
+						<Card>
+							<CardBody>
+								<Row gutter='30' align='middle' justify='left'>
+									<Col>
+									<h5>{this.state.selectedCompanyDetails.CId}</h5>
+									</Col>
+									<Col>
+									<h5>{this.state.selectedCompanyDetails.CName}</h5>
+									</Col>
+									<Col>
+									<h5>{this.state.selectedCompanyDetails.CDescription}</h5>
+									</Col>
+									<Col>
+									<h5>HI!!!</h5>
+									</Col>
+								</Row>
+							</CardBody>
+						</Card>
+					</div> : null}
+
 					</div>
 				</div>
 			</div>
