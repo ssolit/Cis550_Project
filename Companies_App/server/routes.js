@@ -79,7 +79,9 @@ function getJobs(req, res) {
 
 
 function getAllEmployees(req, res) {
-  var query = `SELECT * FROM TO_Employees LIMIT 5`;
+  var query = `SELECT employee_id, employeeName, CompanyName, role 
+              FROM TO_Employees 
+              LIMIT 5`;
   
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
