@@ -23,7 +23,7 @@ WHERE role LIKE \'93%`$\{search_position\}`%\'94;\
 \cf0 3) Simple: companies that have an opening of a certain job position\
 SELECT employer_name\
 FROM handshake_jobs\
-WHERE job_name like \'93%`$\{search_position\}`%\'94;\
+WHERE title like \'93%`$\{search_position\}`%\'94;\
 \
 4) Simple: display company information\
 SELECT *\
@@ -38,7 +38,7 @@ WHERE companyName LIKE '%$\{search_position\}%';\
                         WHERE yearsofexperience < 5 AND city LIKE 'New York'\
                         GROUP BY company\
                         HAVING AvgSalary > 10000)\
-SELECT employer_name AS Company, job_name AS JobName\
+SELECT employer_name AS Company, title AS JobName\
 FROM HS_Jobs\
 JOIN ExpSalaryTable ON HS_Jobs.employer_name = ExpSalaryTable.company\
 WHERE (location_cities_1 LIKE 'New York'\
@@ -54,8 +54,8 @@ WHERE (location_cities_1 LIKE 'New York'\
 SELECT AVG(basesalary)\
 FROM Salary s\
 JOIN HS_Jobs h ON h.employer_name = s.company\
-  AND h.job_name = s.title\
-WHERE h.job_name LIKE '%$\{search_position\}%';\
+  AND h.title = s.title\
+WHERE h.title LIKE '%$\{search_position\}%';\
 \
 7) Complex: Select the names, roles, and descriptions of top ranking people in a company, i.e., the people who are at most 3 degrees of freedom away from the CEO\cf2 \cb3 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab560\pardirnatural\partightenfactor0

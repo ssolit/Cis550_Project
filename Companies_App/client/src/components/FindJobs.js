@@ -10,7 +10,7 @@ export default class FindJobs extends React.Component {
 		// State maintained by this React component is the inputted search,
 		// and the list of companies of that search.
 		this.state = {
-			jobID: "",
+			companyName: "",
 			foundJobs: []
 		}
 
@@ -20,7 +20,7 @@ export default class FindJobs extends React.Component {
 
 	handleSearchChange(e) {
 		this.setState({
-			jobTitle: e.target.value
+			companyName: e.target.value
 		});
 	}
 
@@ -29,7 +29,7 @@ export default class FindJobs extends React.Component {
 		// TODO: (4) - Complete the fetch for this function
 		// Hint: Name of search submitted is contained in `this.state.search`.
 
-		fetch(`http://localhost:8081/jobs/${this.state.jobID}`,
+		fetch(`http://localhost:8081/jobs/${this.state.companyName}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -51,7 +51,7 @@ export default class FindJobs extends React.Component {
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
-					jobCompanies: jobsDivs
+					foundJobs: jobsDivs
 				});
 			});
 	}
@@ -88,7 +88,7 @@ export default class FindJobs extends React.Component {
 						</div>
 
 						<div className="results-container" id="results">
-							{this.state.foundCompanies}
+							{this.state.foundJobs}
 						</div>
 					</div>
 				</div>
