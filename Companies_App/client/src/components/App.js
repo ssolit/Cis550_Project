@@ -8,6 +8,7 @@ import Dashboard from './Dashboard';
 import FindCompanies from './FindCompanies';
 import CompanyPage from './CompanyPage';
 import FindJobs from './FindJobs';
+import FindEmployees from './FindEmployees'
 export default class App extends React.Component {
 
 	render() {

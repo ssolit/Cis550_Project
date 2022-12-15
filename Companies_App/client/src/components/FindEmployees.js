@@ -81,9 +81,9 @@ export default class FindEmployees extends React.Component {
 						</div>
 						<div className="header-container">
 							<div className="headers">
-								<div className="header"><strong>employee</strong></div>
-								{/* <div className="header"><strong>City</strong></div>
-								<div className="header"><strong>State</strong></div> */}
+								<div className="header"><strong>employeeName</strong></div>
+								<div className="header"><strong>CompanyName</strong></div>
+								<div className="header"><strong>role</strong></div>
 							</div>
 						</div>
 
