@@ -83,4 +83,5 @@ module.exports = {
   getCompanies: getCompanies,
   getCompanyPage: getCompanyPage,
   getJobs: getJobs
+  
 }

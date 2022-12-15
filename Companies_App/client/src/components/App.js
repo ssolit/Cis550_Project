@@ -50,6 +50,13 @@ export default class App extends React.Component {
 								<FindJobs />
 							)}
 						/>
+						<Route
+							exact
+							path="/FindEmployees"
+							render={() => (
+								<FindEmployees />
+							)}
+						/>
 					</Switch>
 				</Router>
 			</div>
