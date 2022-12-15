@@ -4,14 +4,14 @@
 	/* margin-top: 10px; */
   }
   
-  .header-container .headers, .results-container .companyResults {
+  .header-container .headers, .results-container .employeeResults {
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
 	height: 40px;
   }
   
-  .companyResults .login, .companyResults .name, .headers .header {
+  .employeeResults .login, .employeeResults .name, .headers .header {
 	flex: 1 0 25%;
   }
   

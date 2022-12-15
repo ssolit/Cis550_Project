@@ -10,7 +10,7 @@ export default class FindEmployees extends React.Component {
 		// State maintained by this React component is the inputted search,
 		// and the list of employees of that search.
 		this.state = {
-			name: "",
+			e_id: "",
 			foundEmployees: []
 		}
 
@@ -29,7 +29,7 @@ export default class FindEmployees extends React.Component {
 		// TODO: (4) - Complete the fetch for this function
 		// Hint: Name of search submitted is contained in `this.state.search`.
 
-		fetch(`http://localhost:8081/employees/${this.state.name}`,
+		fetch(`http://localhost:8081/employees/${this.state.e_id}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -42,9 +42,9 @@ export default class FindEmployees extends React.Component {
 					/* ---- Part 2 (FindEmployees) ---- */
 					// TODO: (6) - Complete the HTML for this map function
 					<div key={i} className="employeeResults">
-						<div className="name">{employee.EmployeeName}</div>
-						<div className="name">{employee.city}</div>
-						<div className="name">{employee.state}</div>
+						<div className="name">{employee.employeeName}</div>
+						<div className="name">{employee.CompanyName}</div>
+						<div className="name">{employee.role}</div>
 						{/* <button onClick={this.submitEmployeePage} id="myButton" >Employee Page</button> */}
 					</div>
 				);
@@ -58,7 +58,7 @@ export default class FindEmployees extends React.Component {
 
 	submitEmployeePage() {
 		document.getElementById("myButton").onclick = function () {
-			window.location.href = `http://localhost:3000/employeepage/${this.state.name}`
+			window.location.href = `http://localhost:3000/employeepage/${this.state.e_id}`
 		};
 	}
 
