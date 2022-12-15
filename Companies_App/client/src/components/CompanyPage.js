@@ -18,39 +18,35 @@ import { format } from 'd3-format';
 
 
 import MenuBar from '../components/MenuBar';
-import { getPlayerSearch, getPlayer } from '../fetcher'
+import { getCompanySearch, getCompany } from 'companyfetcher'
 const wideFormat = format('.3r');
 
 const companyColumns = [
     {
-        title: 'Role',
-        dataIndex: 'Role',
-        key: 'Role',
+        title: 'Name',
+        dataIndex: 'Name',
+        key: 'Name',
         sorter: (a, b) => a.Name.localeCompare(b.Name),
-        render: (text, row) => <a href={`/players?id=${row.PlayerId}`}>{text}</a>
+        render: (text, row) => <a href={`/company?id=${row.CName}`}>{text}</a>
     },
     {
-        title: 'Opening',
-        dataIndex: 'Opening',
-        key: 'Opening',
-        sorter: (a, b) => a.Nationality.localeCompare(b.Nationality)
+        title: 'City',
+        dataIndex: 'City',
+        key: 'City',
+        sorter: (a, b) => a.City.localeCompare(b.City)
+    },
+    {
+        title: 'State',
+        dataIndex: 'State',
+        key: 'State',
+        sorter: (a, b) => a.State.localeCompare(b.State)
     },
     {
         title: 'Salary',
         dataIndex: 'Salary',
         key: 'Salary',
-        sorter: (a, b) => a.Potential - b.Potential
-    },
-    {
-        title: 'Location',
-        dataIndex: 'Location',
-        key: 'Location',
-        sorter: (a, b) => a.Club.localeCompare(b.Club)
-    },
-    {
-        title: 'Value',
-        dataIndex: 'Value',
-        key: 'Value'
+        sorter: (a, b) => a.Salary - b.Salary
+
     }
 ];
 
@@ -59,72 +55,56 @@ class CompanyPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            nameQuery: '',
-            nationalityQuery: '',
-            clubQuery: '',
-            ratingHighQuery: 100,
-            ratingLowQuery: 0,
-            potHighQuery: 100,
-            potLowQuery: 0,
-            selectedPlayerId: window.location.search ? window.location.search.substring(1).split('=')[1] : 229594,
-            selectedPlayerDetails: null,
+            roleQuery: '',
+            jobQuery: '',
+            cityQuery: '',
+            salaryQuery: 0,
+            selectedCompanyId: window.location.search ? window.location.search.substring(1).split('=')[1] : 0,
+            selectedComapnyDetails: null,
             playersResults: []
-
         }
 
         this.updateSearchResults = this.updateSearchResults.bind(this)
-        this.handleNameQueryChange = this.handleNameQueryChange.bind(this)
-        this.handleNationalityQueryChange = this.handleNationalityQueryChange.bind(this)
-        this.handleClubQueryChange = this.handleClubQueryChange.bind(this)
-        this.handleRatingChange = this.handleRatingChange.bind(this)
-        this.handlePotentialChange = this.handlePotentialChange.bind(this)
+        this.handleRoleQueryChange = this.handleRoleQueryChange.bind(this)
+        this.handleJobQueryChange = this.handleJobQueryChange.bind(this)
+        this.handleCityQueryChange = this.handleCityQueryChange.bind(this)
+        this.handleSalaryChange = this.handleSalaryChange.bind(this)
     }
 
     
 
-    handleNameQueryChange(event) {
-        this.setState({ nameQuery: event.target.value })
+    handleRoleQueryChange(event) {
+        this.setState({ roleQuery: event.target.value })
     }
 
-    handleClubQueryChange(event) {
-        // TASK 20: update state variables appropriately. See handleNameQueryChange(event) for reference
-        this.setState({ clubQuery: event.target.value })
+    handleJobQueryChange(event) {
+        this.setState({ jobQuery: event.target.value })
     }
 
-    handleNationalityQueryChange(event) {
-        // TASK 21: update state variables appropriately. See handleNameQueryChange(event) for reference
-        this.setState({ nationalityQuery: event.target.value })
+    handleSalaryChange(value) {
+        this.setState({ salaryQuery: value[0] })
     }
 
-    handleRatingChange(value) {
-        this.setState({ ratingLowQuery: value[0] })
-        this.setState({ ratingHighQuery: value[1] })
-    }
-
-    handlePotentialChange(value) {
-        // TASK 22: parse value and update state variables appropriately. See handleRatingChange(value) for reference
-        this.setState({ potentialLowQuery: value[0] })
-        this.setState({ potentialHighQuery: value[1] })
+    handleCityQueryChange(event) {
+        this.setState({ cityQuery: event.target.value })
     }
 
 
 
     updateSearchResults() {
-        //TASK 23: call getPlayerSearch and update playerResults in state. See componentDidMount() for a hint
-        getPlayerSearch(this.state.nameQuery, this.state.nationalityQuery, this.state.clubQuery, this.state.ratingHighQuery, this.state.ratingLowQuery, this.state.potHighQuery, this.state.potLowQuery, null, null).then(res => {
+        //TASK 23: call getCompanySearch and update playerResults in state. See componentDidMount() for a hint
+        getCompanySearch(this.state.roleQuery, this.state.jobQuery, this.state.cityQuery, this.state.salaryQuery, null, null).then(res => {
             this.setState({ playersResults: res.results })
         })
     }
 
     componentDidMount() {
-        getPlayerSearch(this.state.nameQuery, this.state.nationalityQuery, this.state.clubQuery, this.state.ratingHighQuery, this.state.ratingLowQuery, this.state.potHighQuery, this.state.potLowQuery, null, null).then(res => {
+        getCompanySearch(this.state.roleQuery, this.state.jobQuery, this.state.cityQuery, this.state.salaryQuery, null, null).then(res => {
             this.setState({ playersResults: res.results })
         })
 
-        // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable. 
-        // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint!
-        getPlayer(this.state.selectedPlayerId).then(res => {
-            this.setState({ selectedPlayerDetails: res.results[0] })
+        getCompany(this.state.selectedCompanyId).then(res => {
+            this.setState({ selectedComapnyDetails: res.results[0] })
         })
     }
 
@@ -138,13 +118,12 @@ class CompanyPage extends React.Component {
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Name</label>
-                            <FormInput placeholder="Name" value={this.state.nameQuery} onChange={this.handleNameQueryChange} />
+                            <FormInput placeholder="Name" value={this.state.roleQuery} onChange={this.handleroleQueryChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Nationality</label>
-                            <FormInput placeholder="Nationality" value={this.state.nationalityQuery} onChange={this.handleNationalityQueryChange} />
+                            <FormInput placeholder="Nationality" value={this.state.jobQuery} onChange={this.handlejobQueryChange} />
                         </FormGroup></Col>
-                        {/* TASK 26: Create a column for Club, using the elements and style we followed in the above two columns. Use the onChange method (handleClubQueryChange)  */}
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Club</label>
                             <FormInput placeholder="Club" value={this.state.clubQuery} onChange={this.handleClubQueryChange} />
@@ -156,7 +135,6 @@ class CompanyPage extends React.Component {
                             <label>Rating</label>
                             <Slider range defaultValue={[50, 100]} onChange={this.handleRatingChange} />
                         </FormGroup></Col>
-                        {/* TASK 27: Create a column with a label and slider in a FormGroup item for filtering by Potential. See the column above for reference and use the onChange method (handlePotentialChange)  */}
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Potential</label>
                             <Slider range defaultValue={[50, 100]} onChange={this.handlePotentialChange} />
@@ -170,7 +148,6 @@ class CompanyPage extends React.Component {
 
                 </Form>
                 <Divider />
-                {/* TASK 24: Copy in the players table from the Home page, but use the following style tag: style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }} - this should be one line of code! */}
                 <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                     <h3>Players</h3>
                     <Table dataSource={this.state.playersResults} columns={companyColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
@@ -178,64 +155,62 @@ class CompanyPage extends React.Component {
 
                 <Divider />
 
-                {this.state.selectedPlayerDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
+                {this.state.selectedComapnyDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                     <Card>
                     
                         <CardBody>
                         <Row gutter='30' align='middle' justify='center'>
                             <Col flex={2} style={{ textAlign: 'left' }}>
-                            <h3>{this.state.selectedPlayerDetails.Name}</h3>
+                            <h3>{this.state.selectedComapnyDetails.Name}</h3>
 
                             </Col>
 
                             <Col flex={2} style={{ textAlign: 'right' }}>
-                            <img src={this.state.selectedPlayerDetails.Photo} referrerpolicy="no-referrer" alt={null} style={{height:'15vh'}}/>
+                            <img src={this.state.selectedComapnyDetails.Photo} referrerpolicy="no-referrer" alt={null} style={{height:'15vh'}}/>
 
                             </Col>
                         </Row>
                             <Row gutter='30' align='middle' justify='left'>
                                 <Col>
-                                <h5>{this.state.selectedPlayerDetails.Club}</h5>
+                                <h5>{this.state.selectedComapnyDetails.Club}</h5>
                                 </Col>
                                 <Col>
-                                <h5>{this.state.selectedPlayerDetails.JerseyNumber}</h5>
+                                <h5>{this.state.selectedComapnyDetails.JerseyNumber}</h5>
                                 </Col>
                                 <Col>
-                                <h5>{this.state.selectedPlayerDetails.BestPosition}</h5>
+                                <h5>{this.state.selectedComapnyDetails.BestPosition}</h5>
                                 </Col>
                             </Row>
                             <br>
                             </br>
                             <Row gutter='30' align='middle' justify='left'>
                                 <Col>
-                                    Age: {this.state.selectedPlayerDetails.Age}
-                                </Col>
-                                {/* TASK 28: add two more columns here for Height and Weight, with the appropriate labels as above */}
-                                <Col>
-                                    Height: {this.state.selectedPlayerDetails.Height}
+                                    Age: {this.state.selectedComapnyDetails.Age}
                                 </Col>
                                 <Col>
-                                    Weight: {this.state.selectedPlayerDetails.Weight}
+                                    Height: {this.state.selectedComapnyDetails.Height}
+                                </Col>
+                                <Col>
+                                    Weight: {this.state.selectedComapnyDetails.Weight}
                                 </Col>
                                 <Col flex={2} style={{ textAlign: 'right' }}>
-                                {this.state.selectedPlayerDetails.Nationality}
-                                    <img src={this.state.selectedPlayerDetails.Flag} referrerpolicy="no-referrer" alt={null} style={{height:'3vh', marginLeft: '1vw'}}/>
+                                {this.state.selectedComapnyDetails.Nationality}
+                                    <img src={this.state.selectedComapnyDetails.Flag} referrerpolicy="no-referrer" alt={null} style={{height:'3vh', marginLeft: '1vw'}}/>
                                 </Col>
 
                             </Row>
                             <Row gutter='30' align='middle' justify='left'>
                                 <Col>
-                                    Value: {this.state.selectedPlayerDetails.Value}
+                                    Value: {this.state.selectedComapnyDetails.Value}
                                 </Col>
                                 <Col>
-                                    Release Clause: {this.state.selectedPlayerDetails.ReleaseClause}
-                                </Col>
-                                {/* TASK 29: Create 2 additional columns for the attributes 'Wage' and 'Contract Valid Until' (use spaces between the words when labelling!) */}
-                                <Col>
-                                    Wage: {this.state.selectedPlayerDetails.Wage}
+                                    Release Clause: {this.state.selectedComapnyDetails.ReleaseClause}
                                 </Col>
                                 <Col>
-                                    Contract Valid Until: {this.state.selectedPlayerDetails.ContractValidUntil}
+                                    Wage: {this.state.selectedComapnyDetails.Wage}
+                                </Col>
+                                <Col>
+                                    Contract Valid Until: {this.state.selectedComapnyDetails.ContractValidUntil}
                                 </Col>
                             </Row>
                         </CardBody>
@@ -247,24 +222,20 @@ class CompanyPage extends React.Component {
                             <Row gutter='30' align='middle' justify='center'>
                             <Col flex={2} style={{ textAlign: 'left' }}>
                                 <h6>Skill</h6>
-                                    <Rate disabled defaultValue={this.state.selectedPlayerDetails.Skill} />
+                                    <Rate disabled defaultValue={this.state.selectedComapnyDetails.Skill} />
                                 <h6>Reputation</h6>
-                                    {/* TASK 30: create a star rating component for 'InternationalReputation'. Make sure you use the 'disabled' option as above to ensure it is read-only*/}
-                                    <Rate disabled defaultValue={this.state.selectedPlayerDetails.InternationalReputation} />
+                                    <Rate disabled defaultValue={this.state.selectedComapnyDetails.InternationalReputation} />
                                 <Divider/>
                                 <h6>Best Rating</h6>
-                                    <Progress style={{ width: '20vw'}} value={this.state.selectedPlayerDetails.BestOverallRating} >{this.state.selectedPlayerDetails.BestOverallRating}</Progress>
-                                {/* TASK 31: create the headings and progress bars for 'Potential' and 'Rating'. Use the same style as the one above for 'Best Rating'.*/}
+                                    <Progress style={{ width: '20vw'}} value={this.state.selectedComapnyDetails.BestOverallRating} >{this.state.selectedComapnyDetails.BestOverallRating}</Progress>
                                 <h6>Potential</h6>
-                                    <Progress style={{ width: '20vw'}} value={this.state.selectedPlayerDetails.Potential} >{this.state.selectedPlayerDetails.Potential}</Progress>
+                                    <Progress style={{ width: '20vw'}} value={this.state.selectedComapnyDetails.Potential} >{this.state.selectedComapnyDetails.Potential}</Progress>
                                 <h6>Rating</h6>
-                                    <Progress style={{ width: '20vw'}} value={this.state.selectedPlayerDetails.Rating} >{this.state.selectedPlayerDetails.Rating}</Progress>
+                                    <Progress style={{ width: '20vw'}} value={this.state.selectedComapnyDetails.Rating} >{this.state.selectedComapnyDetails.Rating}</Progress>
                             </Col >
                             <Col  push={2} flex={2}>
-                            {/*TASK 32: In case the player is a GK, show a radar chart (replacing 'null' below) with the labels: Penalties, Diving, Handling, Kicking, Positioning, Reflexes */}
-
-                                {this.state.selectedPlayerDetails.BestPosition === 'GK' ? <RadarChart
-                                data={[this.state.selectedPlayerDetails]}
+                                {this.state.selectedComapnyDetails.BestPosition === 'GK' ? <RadarChart
+                                data={[this.state.selectedComapnyDetails]}
                                 tickFormat={t => wideFormat(t)}
                                 startingAngle={0}
                                 domains={[
@@ -278,7 +249,7 @@ class CompanyPage extends React.Component {
                                 width={450}
                                 height={400}
                                 /> : <RadarChart
-                                data={[this.state.selectedPlayerDetails]}
+                                data={[this.state.selectedComapnyDetails]}
                                 tickFormat={t => wideFormat(t)}
                                 startingAngle={0}
                                 domains={[
