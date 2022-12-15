@@ -59,14 +59,13 @@ export default class EmployeePage extends React.Component {
 			// foundEmployees: [],
 			// rawfoundEmployees: [],
 			similarEmployees: [],
-			employeeDetails: [],
+			employeeDetails: [{"description": "Unavailable"}],
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
 		console.log("e_id: " + this.state.e_id)
-		console.log(employeeColumns)
-		console.log(specificEmployeeColumns)
+		console.log(this.state.employeeDetails[0]["description"])
 	}
 
 	componentDidMount() {
@@ -82,8 +81,7 @@ export default class EmployeePage extends React.Component {
 				this.setState({
 					employeeDetails: emplDetails,
 				})
-				console.log("this.state.employeeDetails: ");
-				console.log(this.state.employeeDetails)
+				// console.log(this.state.employeeDetails[0]["description"])
 			}
 		);
 		fetch(`http://localhost:8081/employeesSimilar/${this.state.e_id}`,
@@ -97,10 +95,9 @@ export default class EmployeePage extends React.Component {
 				this.setState({
 					similarEmployees: simEmplList,
 				})
-				// console.log("this.state.similarEmployees: ");
-				// console.log(this.state.similarEmployees)
 			}
 		);
+		
 
 
 	}
@@ -150,6 +147,7 @@ export default class EmployeePage extends React.Component {
 
 
 	render() {
+		// console.log(this.state.employeeDetails[0]["description"])
 
 		return (
 			<div className="Recommendations">
@@ -157,12 +155,15 @@ export default class EmployeePage extends React.Component {
 
 				<div className="container recommendations-container">
 					<br></br>
-					<div className="jumbotron findFriend-headspace"> {/* EmployeePage) big grey container ---- specificEmployeeColumns*/}
+					<div className="jumbotron findFriend-headspace"> {/* EmployeePage) big grey container ---- this.state.employeeDetails[0]["description"] */}
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 								<h3>Employee Details</h3>
 								<Table dataSource={this.state.employeeDetails} columns={specificEmployeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
+						<p>{this.state.employeeDetails[0]["description"]} </p>
+						
 					</div>
+					
 
 					{/* hyperlinks */}
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
