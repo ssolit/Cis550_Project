@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import FindCompanies from './FindCompanies';
-import CompanyPage from './CompanyPage';
+import CompanyPage from './CompanyPageOld';
 import FindJobs from './FindJobs';
 export default class App extends React.Component {
 
