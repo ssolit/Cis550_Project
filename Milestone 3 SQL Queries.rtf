@@ -123,12 +123,19 @@ LIMIT 5;\
 \
 9) Complex: Find jobs from company where no one is remote.\
 SELECT *\
-FROM HS_Jobs\
-WHERE employer_name NOT IN (\
+FROM HS_Jobs H\
+WHERE H.employer_name NOT IN (\
     SELECT CompanyName\
     FROM TO_Employees\
-    WHERE remote = 0\
-    );\
+    WHERE remote = 1\
+    ) AND H.remote = 0\
+ORDER BY employer_name;\
+\
+optimized: completes less than 1 sec:\
+SELECT *\
+FROM HS_Jobs\
+WHERE remote = 0\
+ORDER BY employer_name;\
 \
 \
 \
