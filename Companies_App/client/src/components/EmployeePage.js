@@ -38,14 +38,14 @@ const employeeColumns = [
     }
 ]
 
-const specificEmployeeColumns = [...employeeColumns].append(
+const specificEmployeeColumns = employeeColumns.concat([
 	{
 		title: 'Remote',
 		dataIndex: 'remote',
 		key: 'remote',
 		// sorter: (a, b) => a.role.localeCompare(b.role),
 	}
-)
+]);
 
 export default class EmployeePage extends React.Component {
 	constructor(props) {
@@ -65,6 +65,8 @@ export default class EmployeePage extends React.Component {
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
 		console.log("e_id: " + this.state.e_id)
+		console.log(employeeColumns)
+		console.log(specificEmployeeColumns)
 	}
 
 	componentDidMount() {
@@ -155,10 +157,10 @@ export default class EmployeePage extends React.Component {
 
 				<div className="container recommendations-container">
 					<br></br>
-					<div className="jumbotron findFriend-headspace"> {/* EmployeePage) big grey container */}
+					<div className="jumbotron findFriend-headspace"> {/* EmployeePage) big grey container ---- specificEmployeeColumns*/}
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 								<h3>Employee Details</h3>
-								<Table dataSource={this.state.employeeDetails} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+								<Table dataSource={this.state.employeeDetails} columns={specificEmployeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
 					</div>
 

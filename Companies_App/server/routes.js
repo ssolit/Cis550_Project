@@ -111,7 +111,7 @@ function getEmployees(req, res) {
 function getEmployeeFromID(req, res) {
   inputSearch = req.params.id;
   var query = `
-  SELECT employee_id, employeeName, role, description, 
+  SELECT employeeName, CompanyName, role, description, 
   CASE
     WHEN remote=0 THEN "No"
     WHEN remote=1 THEN "Yes"
