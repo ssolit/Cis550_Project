@@ -89,6 +89,22 @@ function getAllEmployees(req, res) {
   });
 };
 
+function getEmployees(req, res) {
+  inputSearch = req.params.name;
+  var query = `
+    SELECT e_id, employeeName, CompanyName, role
+    FROM TO_companies
+    WHERE employeeName LIKE "${inputSearch}"
+  `;
+  
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
   var query = `WITH desiredRole AS (
@@ -140,7 +156,9 @@ module.exports = {
   getCompanies: getCompanies,
   getCompanyPage: getCompanyPage,
   getJobs: getJobs,
+
   getAllEmployees: getAllEmployees,
+  getEmployees: getEmployees,
   getSimilarEmployees: getSimilarEmployees,
 
 }

@@ -31,7 +31,8 @@ app.get('/companypage/:name', routes.getCompanyPage); // Hint: Replace () => {} 
 app.get('/jobs/:name', routes.getJobs); // Hint: Replace () => {} with the appropriate route handler in routes.js.
 
 app.get('/employees', routes.getAllEmployees);
-app.get('/employees/:e_id', routes.getSimilarEmployees);
+app.get('/employees/:name', routes.getEmployees);
+// app.get('/employees/:e_id', routes.getSimilarEmployees);
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
