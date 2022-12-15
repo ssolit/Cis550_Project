@@ -122,14 +122,14 @@ JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id\
 ORDER BY employeeName\
 LIMIT 5;\
 \
-9) Complex: Rank companies according to highest paying open positions with number of employees in a certain range.\
-SELECT DISTINCT(S.company)\
-FROM Salary S JOIN HS_Jobs H ON S.company = H.employer_name\
-WHERE EXISTS (SELECT CompanyName\
-	FROM TO_companies C\
-	WHERE C.CompanyName = S.company AND employeeSizeRange = @employee_range)\
-AND H.job_type_name ="Job"\
-ORDER BY S.basesalary + S.bonus DESC;\
+9) Complex: Find jobs from company where no one is remote.\
+SELECT *\
+FROM HS_Jobs\
+WHERE employer_name NOT IN (\
+    SELECT CompanyName\
+    FROM TO_Employees\
+    WHERE remote = 0\
+    );\
 \
 \
 \
