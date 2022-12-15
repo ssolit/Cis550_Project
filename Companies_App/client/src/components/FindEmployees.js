@@ -29,7 +29,7 @@ export default class FindEmployees extends React.Component {
 		this.setState({
 			name: e.target.value
 		});
-		console.log("e_id: " + this.state.e_id + ", name: " + this.state.name);
+		console.log("In handleSearchChange. e_id: " + this.state.e_id + ", name: " + this.state.name);
 	}
 
 	submitSearch() {

@@ -93,9 +93,9 @@ function getEmployees(req, res) {
   inputSearch = req.params.name;
   var query = `
     SELECT employee_id, employeeName, CompanyName, role
-    FROM TO_companies
-    WHERE employeeName LIKE "%${inputSearch}%
-    LIMIT 5"
+    FROM TO_Employees
+    WHERE employeeName LIKE "%${inputSearch}%"
+    LIMIT 5
   `;
   
   connection.query(query, function (err, rows, fields) {
