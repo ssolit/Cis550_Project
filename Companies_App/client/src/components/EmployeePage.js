@@ -49,17 +49,33 @@ export default class EmployeePage extends React.Component {
 			name: "",
 			foundEmployees: [],
 			rawfoundEmployees: [],
+			similarEmployees: [],
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
 	}
 
-	// componentDidMount() {
-	// 	getAllEmployees(null, null).then(res => {
-	// 		this.setState({ foundEmployees: res.results })
-	// 	  })
-	// }
+	componentDidMount() {
+		console.log("in EmployeePage componentDidMount")
+		var sim = fetch(`http://localhost:8081/employeesSimilar/275`,
+			{
+				method: "GET"
+			}).then(res => {
+				console.log("submitSearch then 1");
+				return res.json();
+			}, err => {
+				console.log(err);
+			}).then(simEmplList => {
+				console.log("simEmplList = ")
+				console.log(simEmplList)
+				this.setState({
+					similarEmployees: simEmplList,
+				})
+			});
+		console.log(this.state.similarEmployees);
+		
+	}
 
 	handleSearchChange(e) {
 		this.setState({
@@ -136,14 +152,17 @@ export default class EmployeePage extends React.Component {
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
 						</div>
 
-						{/* hyperlinks */}
-						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+					</div>
+
+					
+
+				</div>
+
+				<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 							<h3>hypertable</h3>
 							<Table dataSource={this.state.rawfoundEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
-
-					</div>
-				</div>
+						
 			</div>
 		);
 	}
