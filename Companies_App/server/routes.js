@@ -126,7 +126,6 @@ function getEmployeeFromID(req, res) {
 
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
-  inputPerson = 275;
   console.log(`in routes.js/getSimilarEmployees. input = ${inputPerson}`)
   var query = `WITH desiredRole AS (
                     SELECT role
@@ -173,7 +172,7 @@ function getSimilarEmployees(req, res) {
       res.json(rows);
     }
   });
-  
+
 };
 
 // The exported functions, which can be accessed in index.js.

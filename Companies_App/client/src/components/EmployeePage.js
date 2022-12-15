@@ -18,7 +18,7 @@ import {
 
 const employeeColumns = [
     {
-        title: 'takjsdhf Page Employee Name',
+        title: 'Page Employee Name',
         dataIndex: 'employeeName',
         key: 'employeeName',
         // sorter: (a, b) => a.employeeName.localeCompare(b.employeeName),
@@ -31,7 +31,7 @@ const employeeColumns = [
         // sorter: (a, b) => a.CompanyName.localeCompare(b.CompanyName),
     },
 	{
-        title: 'asdhfklas Page Role',
+        title: 'Page Role',
         dataIndex: 'role',
         key: 'role',
         // sorter: (a, b) => a.role.localeCompare(b.role),
@@ -45,20 +45,21 @@ export default class EmployeePage extends React.Component {
 		// State maintained by this React component is the inputted search,
 		// and the list of employees of that search.
 		this.state = {
-			e_id: "",
+			e_id: window.location.search ? window.location.search.substring(1).split('=')[1] : 1,
 			name: "",
-			foundEmployees: [],
-			rawfoundEmployees: [],
+			// foundEmployees: [],
+			// rawfoundEmployees: [],
 			similarEmployees: [],
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
+		console.log("e_id: " + this.state.e_id)
 	}
 
 	submitSearch() {
 		console.log("in EmployeePage componentDidMount. wait 5 sec")
-		var sim = fetch(`http://localhost:8081/employeesSimilar/275`,
+		var sim = fetch(`http://localhost:8081/employeesSimilar/${this.state.e_id}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -154,7 +155,7 @@ export default class EmployeePage extends React.Component {
 
 					{/* hyperlinks */}
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<h3>hypertable</h3>
+							<h3>Similar Employees</h3>
 							<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
 
