@@ -30,6 +30,17 @@ app.get('/companypage/:name', routes.getCompanyPage); // Hint: Replace () => {} 
 // TODO: (2) - Add route '/jobs/:name' for the functionality of FindCompanies page 
 app.get('/jobs/:name', routes.getJobs); // Hint: Replace () => {} with the appropriate route handler in routes.js.
 
+/* company roles */
+app.get('/companypos/:role', routes.companypos);
+
+/* company openings */
+app.get('/companyopening/:role', routes.companyopening);
+
+/* company openings */
+//app.get('/jobopenings/?Location=:location&Salary=:salary', routes.jobopenings);
+app.get('/jobopenings/', routes.jobopenings);
+
+
 app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:name', routes.getEmployees);
 app.get('/employeeFromId/:id', routes.getEmployeeFromID)

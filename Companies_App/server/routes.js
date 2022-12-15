@@ -98,11 +98,11 @@ function employeesubs(req, res) {
 
 /* --- query 2 --- */
 function companypos(req, res) {
-  var inputSearch = req.params.name;
+  var inputSearch = req.params.role;
 
   var query = `
-    SELECT company_id AS CId, CompanyName AS CName
-    FROM to_employees
+    SELECT CompanyName AS CName
+    FROM TO_Employees
     WHERE role LIKE '%${inputSearch}%';
   `;
   connection.query(query, function (err, rows, fields) {
@@ -116,12 +116,12 @@ function companypos(req, res) {
 
 /* --- query 3 --- */
 function companyopening(req, res) {
-  var inputSearch = req.params.name;
+  var inputSearch = req.params.role;
 
   var query = `
     SELECT employer_name AS CName
-    FROM handshake_jobs
-    HERE job_name LIKE '%${inputSearch}%';
+    FROM HS_Jobs
+    WHERE title LIKE '%${inputSearch}%';
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -159,11 +159,10 @@ function jobopenings(req, res) {
 
   var query = `
     WITH ExpSalaryTable AS (SELECT company, AVG(totalyearlycompensation) AS AvgSalary
-    FROM Salary
-    WHERE yearsofexperience < 5 AND city LIKE '%${Location}%'
-    GROUP BY company
-    HAVING AvgSalary > '%${Salary}%')
-    SELECT employer_name AS CName, job_name AS JName
+      FROM Salary
+      GROUP BY company
+      HAVING AvgSalary > ${Salary})
+    SELECT employer_name AS CName, title AS JName, '${Location}' AS CCity
     FROM HS_Jobs
     JOIN ExpSalaryTable ON HS_Jobs.employer_name = ExpSalaryTable.company
     WHERE (location_cities_1 LIKE '%${Location}%'
