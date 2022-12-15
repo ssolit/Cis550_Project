@@ -78,6 +78,17 @@ function getJobs(req, res) {
 };
 
 
+function getAllEmployees(req, res) {
+  var query = `SELECT * FROM TO_Employees`;
+  
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
   var query = `WITH desiredRole AS (
@@ -121,8 +132,7 @@ function getSimilarEmployees(req, res) {
       res.json({ results: results })
     }
   });
-    
-}
+};
 
 // The exported functions, which can be accessed in index.js.
 module.exports = {
@@ -130,6 +140,7 @@ module.exports = {
   getCompanies: getCompanies,
   getCompanyPage: getCompanyPage,
   getJobs: getJobs,
+  getAllEmployees: getAllEmployees,
   getSimilarEmployees: getSimilarEmployees,
 
 }

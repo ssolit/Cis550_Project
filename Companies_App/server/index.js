@@ -30,6 +30,7 @@ app.get('/companypage/:name', routes.getCompanyPage); // Hint: Replace () => {} 
 // TODO: (2) - Add route '/jobs/:name' for the functionality of FindCompanies page 
 app.get('/jobs/:name', routes.getJobs); // Hint: Replace () => {} with the appropriate route handler in routes.js.
 
+app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:e_id', routes.getSimilarEmployees);
 
 app.listen(8081, () => {
