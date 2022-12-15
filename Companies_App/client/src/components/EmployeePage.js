@@ -73,7 +73,8 @@ export default class EmployeePage extends React.Component {
 					similarEmployees: simEmplList,
 				})
 			});
-		console.log(this.state.similarEmployees);
+		console.log("this.state.similarEmployees: ");
+		console.log(this.state.similarEmployees)
 		
 	}
 
@@ -88,7 +89,6 @@ export default class EmployeePage extends React.Component {
 			{
 				method: "GET"
 			}).then(res => {
-				console.log("submitSearch then 1");
 				return res.json();
 			}, err => {
 				console.log(err);
