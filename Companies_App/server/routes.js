@@ -79,7 +79,7 @@ function getJobs(req, res) {
 
 
 function getAllEmployees(req, res) {
-  var query = `SELECT * FROM TO_Employees`;
+  var query = `SELECT * FROM TO_Employees LIMIT 5`;
   
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -92,9 +92,10 @@ function getAllEmployees(req, res) {
 function getEmployees(req, res) {
   inputSearch = req.params.name;
   var query = `
-    SELECT e_id, employeeName, CompanyName, role
+    SELECT employee_id, employeeName, CompanyName, role
     FROM TO_companies
-    WHERE employeeName LIKE "${inputSearch}"
+    WHERE employeeName LIKE "%${inputSearch}%
+    LIMIT 5"
   `;
   
   connection.query(query, function (err, rows, fields) {

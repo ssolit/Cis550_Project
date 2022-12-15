@@ -11,6 +11,7 @@ export default class FindEmployees extends React.Component {
 		// and the list of employees of that search.
 		this.state = {
 			e_id: "",
+			name: "",
 			foundEmployees: []
 		}
 
@@ -18,21 +19,30 @@ export default class FindEmployees extends React.Component {
 		this.submitSearch = this.submitSearch.bind(this);
 	}
 
+	// componentDidMount() {
+	// 	getAllEmployees(null, null).then(res => {
+	// 		this.setState({ foundEmployees: res.results })
+	// 	  })
+	// }
+
 	handleSearchChange(e) {
 		this.setState({
 			name: e.target.value
 		});
+		console.log("e_id: " + this.state.e_id + ", name: " + this.state.name);
 	}
 
 	submitSearch() {
 		/* ---- Part 2 (FindEmployees) ---- */
 		// TODO: (4) - Complete the fetch for this function
 		// Hint: Name of search submitted is contained in `this.state.search`.
+		console.log("entered submitSearch")
 
-		fetch(`http://localhost:8081/employees/${this.state.e_id}`,
+		fetch(`http://localhost:8081/employees/${this.state.name}`,
 			{
 				method: "GET"
 			}).then(res => {
+				console.log("submitSearch fetch 1");
 				return res.json();
 			}, err => {
 				console.log(err);
@@ -51,16 +61,13 @@ export default class FindEmployees extends React.Component {
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
-					foundemployees: employeesDivs
+					foundEmployees: employeesDivs
 				});
+				
 			});
 	}
 
-	submitEmployeePage() {
-		document.getElementById("myButton").onclick = function () {
-			window.location.href = `http://localhost:3000/employeepage/${this.state.e_id}`
-		};
-	}
+
 
 
 	render() {
@@ -81,9 +88,9 @@ export default class FindEmployees extends React.Component {
 						</div>
 						<div className="header-container">
 							<div className="headers">
-								<div className="header"><strong>employeeName</strong></div>
-								<div className="header"><strong>CompanyName</strong></div>
-								<div className="header"><strong>role</strong></div>
+								<div className="header"><strong>Employee Name</strong></div>
+								<div className="header"><strong>Company Name</strong></div>
+								<div className="header"><strong>Role</strong></div>
 							</div>
 						</div>
 
