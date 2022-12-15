@@ -66,7 +66,7 @@ function getJobs(req, res) {
   var query = `
     SELECT id AS id, employer_name AS Company, job_name AS JobName
     FROM HS_Jobs
-    WHERE companyName LIKE "${inputSearch}"
+    WHERE employer_name LIKE "${inputSearch}"
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
