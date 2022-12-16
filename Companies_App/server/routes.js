@@ -202,37 +202,36 @@ function job(req, res) {
 
 /* --- query 7 --- */
 function companyceo(req, res) {
-  //var inputSearch = req.params.name;
-  const CName = req.query.CName ? req.query.CName : '%%'
+  var CName = req.params.name;
 
   var query = `
-    WITH CompanyCEO AS (
-      SELECT employee_id
-      FROM TO_Employees
-      WHERE CompanyName LIKE '%${JName}%' AND role LIKE '%CEO%'
-      ),
-      Dof1 AS (
-          SELECT worksUnder.employee_id
-          FROM worksUnder
-          JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id
-      ),
-      Dof2 AS (
-          SELECT worksUnder.employee_id
-          FROM worksUnder
-          JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id
-      ),
-      Dof3 AS (
-          SELECT worksUnder.employee_id
-          FROM worksUnder
-          JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id
-          ),
-      AllDof3Employees AS (
-          SELECT * FROM CompanyCEO
-          UNION (SELECT * FROM Dof1)
-          UNION (SELECT * FROM Dof2)
-          UNION (SELECT * FROM Dof3)
-      )
-  SELECT employee_id AS EId, employeeName AS EName, role AS ERole, description AS EDescription
+  WITH CompanyCEO AS (
+    SELECT employee_id
+    FROM TO_Employees
+    WHERE CompanyName LIKE '${CName}' AND role LIKE '%CEO%'
+    ),
+    Dof1 AS (
+        SELECT worksUnder.employee_id
+        FROM worksUnder
+        JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id
+    ),
+    Dof2 AS (
+        SELECT worksUnder.employee_id
+        FROM worksUnder
+        JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id
+    ),
+    Dof3 AS (
+        SELECT worksUnder.employee_id
+        FROM worksUnder
+        JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id
+        ),
+    AllDof3Employees AS (
+        SELECT * FROM CompanyCEO
+        UNION (SELECT * FROM Dof1)
+        UNION (SELECT * FROM Dof2)
+        UNION (SELECT * FROM Dof3)
+    )
+  SELECT employeeName AS Name, role AS Role, description AS Description
   FROM TO_Employees
   JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id;
   `;
