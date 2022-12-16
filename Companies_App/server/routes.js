@@ -137,11 +137,10 @@ function company(req, res) {
   var inputSearch = req.params.name;
 
   var query = `
-    SELECT company_id AS CId, CompanyName AS CName, twitterUrl AS Twitter, linkedInUrl AS Linkedin,
-    facebookUrl AS Facebook, websiteUrl AS Website, city AS CCity, state AS CState, country AS CCountry,
-    location AS CLocation, employeeSizeRange AS Size, description AS CDescription
-    FROM to_companies
-    WHERE companyName LIKE '%${inputSearch}%';
+    SELECT company_id AS CId, CompanyName AS CName, city AS CCity, state AS CState, country AS CCountry,
+    employeeSizeRange AS Size, description AS CDescription
+    FROM TO_companies
+    WHERE company_id = ${inputSearch};
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
