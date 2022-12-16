@@ -61,6 +61,8 @@ export default class FindCompanies extends React.Component {
 					/* ---- Part 2 (FindCompanies) ---- */
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
+						<div className="name">{}</div>
+						<div className="name">{}</div>
 					</div>
 				);
 
@@ -89,6 +91,8 @@ export default class FindCompanies extends React.Component {
 					/* ---- Part 2 (FindCompanies) ---- */
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
+						<div className="name">{}</div>
+						<div className="name">{}</div>
 					</div>
 				);
 
@@ -212,10 +216,7 @@ export default class FindCompanies extends React.Component {
                         </FormGroup>
 						</Row>
 						<br></br>
-						{/* <div className="input-container">
-							<input type='text' placeholder="Company Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
-							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
-						</div> */}
+						
 
 						<div className="header-container">
 							<div className="headers">
