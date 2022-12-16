@@ -11,7 +11,7 @@ var connection = mysql.createPool(config);
 /* ---- (Dashboard) ---- */
 function getAllCompanies(req, res) {
   var query = `
-  SELECT CompanyName, city, state
+  SELECT CompanyName AS CName, city AS CCity, state AS CState
   FROM TO_companies
 `;
   connection.query(query, function (err, rows, fields) {
@@ -28,9 +28,10 @@ function getCompanies(req, res) {
 
   // TODO: (3) - Edit query below
   var query = `
-    SELECT CompanyName, city, state
+    SELECT company_id AS CId, CompanyName AS CName, city AS CCity, state AS CState, country AS CCountry,
+    employeeSizeRange AS Size, description AS CDescription
     FROM TO_companies
-    WHERE companyName LIKE "${inputSearch}"
+    WHERE companyName LIKE "%${inputSearch}%"
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -101,7 +102,7 @@ function companypos(req, res) {
   var inputSearch = req.params.role;
 
   var query = `
-    SELECT CompanyName AS CName
+    SELECT CompanyName AS CName, role AS Role
     FROM TO_Employees
     WHERE role LIKE '%${inputSearch}%';
   `;
@@ -119,7 +120,7 @@ function companyopening(req, res) {
   var inputSearch = req.params.role;
 
   var query = `
-    SELECT employer_name AS CName
+    SELECT employer_name AS CName, title AS Role, location_cities_1 AS CCity
     FROM HS_Jobs
     WHERE title LIKE '%${inputSearch}%';
   `;
@@ -134,7 +135,7 @@ function companyopening(req, res) {
 
 /* --- query 4 --- */
 function company(req, res) {
-  var inputSearch = req.params.name;
+  var inputSearch = req.params.id;
 
   var query = `
     SELECT company_id AS CId, CompanyName AS CName, city AS CCity, state AS CState, country AS CCountry,
@@ -151,6 +152,7 @@ function company(req, res) {
   });
 };
 
+
 /* --- query 5 --- */
 function jobopenings(req, res) {
   const Location = req.query.Location ? req.query.Location : '%%'
@@ -161,7 +163,7 @@ function jobopenings(req, res) {
       FROM Salary
       GROUP BY company
       HAVING AvgSalary > ${Salary})
-    SELECT employer_name AS CName, title AS JName, '${Location}' AS CCity
+    SELECT employer_name AS CName, title AS Role, '${Location}' AS CCity
     FROM HS_Jobs
     JOIN ExpSalaryTable ON HS_Jobs.employer_name = ExpSalaryTable.company
     WHERE (location_cities_1 LIKE '%${Location}%'
@@ -203,12 +205,14 @@ function job(req, res) {
 /* --- query 7 --- */
 function companyceo(req, res) {
   var CName = req.params.name;
+  var inputSearch = req.params.id;
 
   var query = `
   WITH CompanyCEO AS (
     SELECT employee_id
     FROM TO_Employees
-    WHERE CompanyName LIKE '${CName}' AND role LIKE '%CEO%'
+    JOIN TO_companies ON TO_Employees.CompanyName = TO_companies.CompanyName
+    WHERE TO_companies.company_id = ${inputSearch} AND TO_Employees.role LIKE '%CEO%'
     ),
     Dof1 AS (
         SELECT worksUnder.employee_id
@@ -231,7 +235,7 @@ function companyceo(req, res) {
         UNION (SELECT * FROM Dof2)
         UNION (SELECT * FROM Dof3)
     )
-  SELECT employeeName AS Name, role AS Role, description AS Description
+  SELECT employeeName AS EName, role AS ERole, description AS EDescription, AllDof3Employees.employee_id AS EId
   FROM TO_Employees
   JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id;
   `;

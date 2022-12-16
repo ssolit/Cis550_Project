@@ -41,10 +41,10 @@ app.get('/companyopening/:role', routes.companyopening);
 app.get('/jobopenings/', routes.jobopenings);
 
 /* company info */
-app.get('/company/:name', routes.company);
+app.get('/companyInfo/:id', routes.company);
 
 /* company ceo */
-app.get('/companyceo/:name', routes.companyceo);
+app.get('/companyceo/:id', routes.companyceo);
 
 app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:name', routes.getEmployees);
