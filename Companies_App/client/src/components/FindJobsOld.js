@@ -1,41 +1,17 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import '../style/FindJobs.css';
+import '../style/FindCompanies.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-import {
-	Table
-} from 'antd'
-
-
-
-const jobColumns = [
-	{
-		title: 'Job ID',
-		dataIndex: 'id',
-		key: 'id',
-		render: (text, row) => <a href={`/JobPage?id=${row.id}`}>{text}</a>
-	},
-	{
-		title: 'Company Name',
-		dataIndex: 'employer_name',
-		key: 'employer_name',
-	},
-	{
-		title: 'Title',
-		dataIndex: 'title',
-		key: 'title',
-	}
-]
 
 export default class FindJobs extends React.Component {
 	constructor(props) {
 		super(props);
+
+		// State maintained by this React component is the inputted search,
+		// and the list of companies of that search.
 		this.state = {
-			j_id: "",
-			name: "",
-			foundJobs: [],
-			rawfoundJobs: [],
+			companyName: "",
+			foundJobs: []
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -44,24 +20,16 @@ export default class FindJobs extends React.Component {
 
 	handleSearchChange(e) {
 		this.setState({
-			name: e.target.value
+			companyName: e.target.value
 		});
 	}
 
-	getRawSearchResults() {
-		fetch(`http://localhost:8081/jobs/${this.state.name}`,
-			{
-				method: "GET"
-			}).then(res => {
-				return res.json();
-			}, err => {
-				console.log(err);
-			})
-	}
-
 	submitSearch() {
+		/* ---- Part 2 (FindCompanies) ---- */
+		// TODO: (4) - Complete the fetch for this function
+		// Hint: Name of search submitted is contained in `this.state.search`.
 
-		fetch(`http://localhost:8081/jobs/${this.state.name}`,
+		fetch(`http://localhost:8081/jobs/${this.state.companyName}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -70,27 +38,29 @@ export default class FindJobs extends React.Component {
 				console.log(err);
 			}).then(jobsList => {
 				console.log(jobsList); //displays your JSON object in the console
-				console.log(jobsList[0].employer_name);
-				console.log(jobsList[0].title);
 				let jobsDivs = jobsList.map((job, i) =>
-					<div key={i} className="jobResults">
+					/* ---- Part 2 (FindCompanies) ---- */
+					// TODO: (6) - Complete the HTML for this map function
+					<div key={i} className="companyResults">
 						<div className="name">{job.id}</div>
-						<div className="name">{job.employer_name}</div>
-						<div className="name">{job.title}</div>
+						<div className="name">{job.Company}</div>
+						<div className="name">{job.JobName}</div>
+						{/* <button onClick={this.submitJobPage} id="myButton" >Job Page</button> */}
 					</div>
 				);
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
-					rawfoundJobs: jobsList,
 					foundJobs: jobsDivs
 				});
-				console.log(this.state.rawfoundEmployees);
-				console.log(this.state.jobsDivs);
 			});
 	}
 
-
+	submitJobPage() {
+		document.getElementById("myButton").onclick = function () {
+			window.location.href = `http://localhost:3000/jobpage/${this.state.jobID}`
+		};
+	}
 
 
 	render() {
@@ -105,30 +75,24 @@ export default class FindJobs extends React.Component {
 						<div className="h5">Find Jobs</div>
 						<div className="input-container">
 							<input type='text' placeholder="Company Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
+							{/* ---- Part 2 (FindCompanies) ---- */}
+							{/* TODO: (5) - Edit button element below */}
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
 						</div>
-
-						{/* hyperlinks */}
-						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<h3>Jobs</h3>
-							<Table dataSource={this.state.rawfoundJobs} columns={jobColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
+						<div className="header-container">
+							<div className="headers">
+								<div className="header"><strong>Job ID</strong></div>
+								<div className="header"><strong>Company</strong></div>
+								<div className="header"><strong>Job Title</strong></div>
+							</div>
 						</div>
 
+						<div className="results-container" id="results">
+							{this.state.foundJobs}
+						</div>
 					</div>
 				</div>
 			</div>
 		);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
