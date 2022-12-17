@@ -40,10 +40,15 @@ app.get('/companypos/:role', routes.companypos);
 /* company openings */
 app.get('/companyopening/:role', routes.companyopening);
 
-/* company openings */
+/* job openings */
 //app.get('/jobopenings/?Location=:location&Salary=:salary', routes.jobopenings);
 app.get('/jobopenings/', routes.jobopenings);
 
+/* company info */
+app.get('/companyInfo/:id', routes.company);
+
+/* company ceo */
+app.get('/companyceo/:id', routes.companyceo);
 
 app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:name', routes.getEmployees);
