@@ -92,34 +92,36 @@ JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id
 \pard\pardeftab560\slleading20\partightenfactor0
 \cf0 \cb1 \
 8) Complex: Similar people recommendation: select 5 people within 2 degrees of freedom from person with similar job role to user\
-WITH deg0 AS (\
-    SELECT employee_id\
-    FROM TO_Employees\
-    WHERE role = @search_position\
-    LIMIT 5\
-    ),\
-    deg1 AS (\
-        SELECT employee_id\
-        FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss\
-        UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)\
-        LIMIT 5\
-    ),\
-    deg2 AS (\
-        SELECT employee_id\
-        FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss\
-        UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)\
-        LIMIT 5\
-    ),\
-    alldegs AS (\
-            SELECT * FROM deg0\
-            UNION (SELECT * FROM deg1)\
-            UNION (SELECT * FROM deg2)\
-    )\
-SELECT employeeName\
-FROM TO_Employees\
-JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id\
-ORDER BY employeeName\
-LIMIT 5;\
+# unoptimized version, 13 sec runtime\
+WITH desiredRole AS (\
+                    SELECT role\
+                    FROM TO_Employees\
+                    WHERE employee_id = @inputPerson\
+                    ),\
+                    deg0 AS (\
+                    SELECT *\
+                    FROM TO_Employees NATURAL JOIN desiredRole d\
+                    ),\
+                    deg1 AS (\
+                        SELECT *\
+                        FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss\
+                        UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)\
+                    ),\
+                    deg2 AS (\
+                        SELECT *\
+                        FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss\
+                        UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)\
+                    ),\
+                    alldegs AS (\
+                            SELECT employee_id FROM deg0\
+                            UNION (SELECT * FROM deg1)\
+                            UNION (SELECT * FROM deg2)\
+                    )\
+                SELECT TO_Employees.employee_id AS employee_id, employeeName, CompanyName, role\
+                FROM TO_Employees\
+                JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id\
+                ORDER BY employeeName\
+                LIMIT 5;\
 \
 \
 # optimized version, ~1 sec runtime\
