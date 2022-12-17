@@ -32,6 +32,7 @@ app.get('/jobs/:name', routes.getJobs);
 app.get('/jobFromId/:id', routes.getJobFromID);
 app.get('/jobsSimilar/:job_id', routes.getSimilarJobs);
 app.get('/estimatedSalary/:job_id', routes.getEstimatedSalary);
+app.get('/getNoRemoteJobs/:name', routes.getNoRemoteJobs);
 
 /* company roles */
 app.get('/companypos/:role', routes.companypos);

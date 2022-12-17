@@ -25,7 +25,13 @@ const jobColumns = [
 		title: 'Title',
 		dataIndex: 'title',
 		key: 'title',
+	},
+	{
+		title: 'Remote',
+		dataIndex: 'remote',
+		key: 'remote',
 	}
+
 ]
 
 const specificJobColumns = jobColumns.concat([
@@ -146,7 +152,7 @@ export default class JobPage extends React.Component {
 					<div className="jumbotron findFriend-headspace">
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 							<h3>Job Details</h3>
-							<Table dataSource={this.state.jobDetails} columns={specificJobColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
+							<Table dataSource={this.state.jobDetails} columns={jobColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 						</div>
 						<h5>Estimated Salary</h5>
 						<p> {es} </p>

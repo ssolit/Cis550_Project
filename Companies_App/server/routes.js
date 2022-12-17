@@ -350,7 +350,12 @@ function jobsimilar(req, res) {
 
 // job functions
 function getAllJobs(req, res) {
-  var query = `SELECT id, employer_name, title
+  var query = `SELECT id, employer_name, title, 
+              CASE
+                  WHEN remote=0 THEN "No"
+                  WHEN remote=1 THEN "Yes"
+                  ELSE "Unknown"
+              END AS remote
               FROM HS_Jobs
               ORDER BY employer_name 
               LIMIT 5`;
@@ -366,7 +371,12 @@ function getAllJobs(req, res) {
 function getJobs(req, res) {
   inputSearch = req.params.name;
   var query = `
-  SELECT id, employer_name, title
+  SELECT id, employer_name, title, 
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
   FROM HS_Jobs
   WHERE employer_name LIKE "%${inputSearch}%"
   LIMIT 5
@@ -438,6 +448,30 @@ function getEstimatedSalary(req, res) {
 
 };
 
+function getNoRemoteJobs(req, res) {
+  var inputSearch = req.params.name;
+  var query = `SELECT id, employer_name, title,
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs H
+  WHERE H.employer_name NOT IN (
+      SELECT CompanyName
+      FROM TO_Employees
+      WHERE remote = 1
+      ) AND H.remote = 0
+  AND H.employer_name LIKE "%${inputSearch}%"
+  ORDER BY employer_name`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
 
 
 // employee functions
@@ -573,6 +607,7 @@ module.exports = {
   getJobs: getJobs,
   getJobFromID: getJobFromID,
   getSimilarJobs: getSimilarJobs,
-  getEstimatedSalary: getEstimatedSalary
+  getEstimatedSalary: getEstimatedSalary,
+  getNoRemoteJobs: getNoRemoteJobs
 
 }

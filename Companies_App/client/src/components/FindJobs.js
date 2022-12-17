@@ -2,8 +2,8 @@ import React from 'react';
 import PageNavbar from './PageNavbar';
 import '../style/FindJobs.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import {
+	Space,
 	Table
 } from 'antd'
 
@@ -25,6 +25,11 @@ const jobColumns = [
 		title: 'Title',
 		dataIndex: 'title',
 		key: 'title',
+	},
+	{
+		title: 'Remote',
+		dataIndex: 'remote',
+		key: 'remote',
 	}
 ]
 
@@ -36,10 +41,12 @@ export default class FindJobs extends React.Component {
 			name: "",
 			foundJobs: [],
 			rawfoundJobs: [],
+			checkbox: true
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
+		this.handleCheckedChange = this.handleCheckedChange.bind(this);
 	}
 
 	handleSearchChange(e) {
@@ -48,7 +55,15 @@ export default class FindJobs extends React.Component {
 		});
 	}
 
+	handleCheckedChange(e) {
+		console.log(e.target.checked)
+		this.setState({ checkbox: !e.target.checked });
+
+		// console.log(this.state.checkbox)
+	}
+
 	getRawSearchResults() {
+		// if not checked, do this fetch. otherwise, no remote jobs
 		fetch(`http://localhost:8081/jobs/${this.state.name}`,
 			{
 				method: "GET"
@@ -60,34 +75,63 @@ export default class FindJobs extends React.Component {
 	}
 
 	submitSearch() {
+		if (this.state.checkbox) {
+			// if not checked, do this fetch. otherwise, no remote jobs
+			fetch(`http://localhost:8081/jobs/${this.state.name}`,
+				{
+					method: "GET"
+				}).then(res => {
+					return res.json();
+				}, err => {
+					console.log(err);
+				}).then(jobsList => {
+					console.log(jobsList); //displays your JSON object in the console
+					console.log(jobsList[0].employer_name);
+					console.log(jobsList[0].title);
+					let jobsDivs = jobsList.map((job, i) =>
+						<div key={i} className="jobResults">
+							<div className="name">{job.id}</div>
+							<div className="name">{job.employer_name}</div>
+							<div className="name">{job.title}</div>
+							<div className="name">{job.remote}</div>
+						</div>
+					);
 
-		fetch(`http://localhost:8081/jobs/${this.state.name}`,
-			{
-				method: "GET"
-			}).then(res => {
-				return res.json();
-			}, err => {
-				console.log(err);
-			}).then(jobsList => {
-				console.log(jobsList); //displays your JSON object in the console
-				console.log(jobsList[0].employer_name);
-				console.log(jobsList[0].title);
-				let jobsDivs = jobsList.map((job, i) =>
-					<div key={i} className="jobResults">
-						<div className="name">{job.id}</div>
-						<div className="name">{job.employer_name}</div>
-						<div className="name">{job.title}</div>
-					</div>
-				);
-
-				//This saves our HTML representation of the data into the state, which we can call in our render function
-				this.setState({
-					rawfoundJobs: jobsList,
-					foundJobs: jobsDivs
+					//This saves our HTML representation of the data into the state, which we can call in our render function
+					this.setState({
+						rawfoundJobs: jobsList,
+						foundJobs: jobsDivs
+					});
 				});
-				console.log(this.state.rawfoundEmployees);
-				console.log(this.state.jobsDivs);
-			});
+		} else {
+
+			fetch(`http://localhost:8081/getNoRemoteJobs/${this.state.name}`,
+				{
+					method: "GET"
+				}).then(res => {
+					return res.json();
+				}, err => {
+					console.log(err);
+				}).then(jobsList => {
+					console.log(jobsList); //displays your JSON object in the console
+					console.log(jobsList[0].employer_name);
+					console.log(jobsList[0].title);
+					let jobsDivs = jobsList.map((job, i) =>
+						<div key={i} className="jobResults">
+							<div className="name">{job.id}</div>
+							<div className="name">{job.employer_name}</div>
+							<div className="name">{job.title}</div>
+							<div className="name">{job.remote}</div>
+						</div>
+					);
+
+					//This saves our HTML representation of the data into the state, which we can call in our render function
+					this.setState({
+						rawfoundJobs: jobsList,
+						foundJobs: jobsDivs
+					});
+				});
+		}
 	}
 
 
@@ -106,6 +150,13 @@ export default class FindJobs extends React.Component {
 						<div className="input-container">
 							<input type='text' placeholder="Company Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
+							<div>
+								<label>
+
+									<input type="checkbox" onClick={this.handleCheckedChange} checked={!this.state.checkbox}></input>
+									No Remote Jobs
+								</label>
+							</div>
 						</div>
 
 						{/* hyperlinks */}
