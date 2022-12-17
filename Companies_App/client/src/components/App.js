@@ -10,6 +10,7 @@ import CompanyPage from './CompanyPage';
 import FindJobs from './FindJobs';
 import FindEmployees from './FindEmployees'
 import EmployeePage from './EmployeePage'
+import JobPage from './JobPage';
 export default class App extends React.Component {
 
 	render() {
@@ -54,6 +55,13 @@ export default class App extends React.Component {
 						/>
 						<Route
 							exact
+							path="/JobPage"
+							render={() => (
+								<JobPage />
+							)}
+						/>
+						<Route
+							exact
 							path="/FindEmployees"
 							render={() => (
 								<FindEmployees />
@@ -63,7 +71,7 @@ export default class App extends React.Component {
 							exact
 							path="/EmployeePage"
 							render={() => (
-								<EmployeePage/>
+								<EmployeePage />
 							)}
 						/>
 					</Switch>
