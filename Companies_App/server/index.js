@@ -28,11 +28,11 @@ app.get('/companypage/:name', routes.getCompanyPage); // Hint: Replace () => {} 
 
 /* ---- Part 4 (FindJobs) ---- */
 app.get('/jobs', routes.getAllJobs);
-app.get('/jobs/:name', routes.getJobs);
+app.get('/jobs/:title', routes.getJobs);
 app.get('/jobFromId/:id', routes.getJobFromID);
 app.get('/jobsSimilar/:job_id', routes.getSimilarJobs);
 app.get('/estimatedSalary/:job_id', routes.getEstimatedSalary);
-app.get('/getNoRemoteJobs/:name', routes.getNoRemoteJobs);
+app.get('/getNoRemoteJobs/:title', routes.getNoRemoteJobs);
 
 /* company roles */
 app.get('/companypos/:role', routes.companypos);

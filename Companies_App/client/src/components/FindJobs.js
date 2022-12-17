@@ -38,7 +38,7 @@ export default class FindJobs extends React.Component {
 		super(props);
 		this.state = {
 			j_id: "",
-			name: "",
+			title: "",
 			foundJobs: [],
 			rawfoundJobs: [],
 			checkbox: true
@@ -51,7 +51,7 @@ export default class FindJobs extends React.Component {
 
 	handleSearchChange(e) {
 		this.setState({
-			name: e.target.value
+			title: e.target.value
 		});
 	}
 
@@ -64,7 +64,7 @@ export default class FindJobs extends React.Component {
 
 	getRawSearchResults() {
 		// if not checked, do this fetch. otherwise, no remote jobs
-		fetch(`http://localhost:8081/jobs/${this.state.name}`,
+		fetch(`http://localhost:8081/jobs/${this.state.title}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -77,7 +77,7 @@ export default class FindJobs extends React.Component {
 	submitSearch() {
 		if (this.state.checkbox) {
 			// if not checked, do this fetch. otherwise, no remote jobs
-			fetch(`http://localhost:8081/jobs/${this.state.name}`,
+			fetch(`http://localhost:8081/jobs/${this.state.title}`,
 				{
 					method: "GET"
 				}).then(res => {
@@ -105,7 +105,7 @@ export default class FindJobs extends React.Component {
 				});
 		} else {
 
-			fetch(`http://localhost:8081/getNoRemoteJobs/${this.state.name}`,
+			fetch(`http://localhost:8081/getNoRemoteJobs/${this.state.title}`,
 				{
 					method: "GET"
 				}).then(res => {
