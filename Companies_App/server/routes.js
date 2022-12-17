@@ -451,19 +451,19 @@ function getEstimatedSalary(req, res) {
 function getNoRemoteJobs(req, res) {
   var inputSearch = req.params.title;
   var query = `SELECT id, employer_name, title,
-  CASE
-    WHEN remote=0 THEN "No"
-    WHEN remote=1 THEN "Yes"
-    ELSE "Unknown"
-  END AS remote
-FROM HS_Jobs H
-WHERE H.employer_name NOT IN (
-    SELECT CompanyName
-    FROM TO_Employees
-    WHERE remote = 1
-    ) AND H.remote = 0
-AND H.title LIKE "%${inputSearch}%"
-ORDER BY employer_name;`;
+                CASE
+                  WHEN remote=0 THEN "No"
+                  WHEN remote=1 THEN "Yes"
+                  ELSE "Unknown"
+                END AS remote
+              FROM HS_Jobs H
+              WHERE H.employer_name NOT IN (
+                  SELECT CompanyName
+                  FROM TO_Employees
+                  WHERE remote = 1
+                  ) AND H.remote = 0
+              AND H.title LIKE "%${inputSearch}%"
+              ORDER BY employer_name;`;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {

@@ -138,7 +138,7 @@ export default class FindEmployees extends React.Component {
 
 						{/* hyperlinks */}
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<h3>hypertable</h3>
+							<h3>Employees</h3>
 							<Table dataSource={this.state.rawfoundEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
 
