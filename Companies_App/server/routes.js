@@ -60,22 +60,22 @@ function getCompanyPage(req, res) {
 };
 
 /* ---- Part 5 (find Jobs Page) ---- */
-function getJobs(req, res) {
-  var inputSearch = req.params.name;
+// function getJobs(req, res) {
+//   var inputSearch = req.params.name;
 
-  var query = `
-    SELECT id AS id, employer_name AS Company, job_name AS JobName
-    FROM HS_Jobs
-    WHERE employer_name LIKE "${inputSearch}"
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
+//   var query = `
+//     SELECT id AS id, employer_name AS Company, job_name AS JobName
+//     FROM HS_Jobs
+//     WHERE employer_name LIKE "${inputSearch}"
+//   `;
+//   connection.query(query, function (err, rows, fields) {
+//     if (err) console.log(err);
+//     else {
+//       console.log(rows);
+//       res.json(rows);
+//     }
+//   });
+// };
 
 
 /* --- query 1 --- */
@@ -348,8 +348,130 @@ function jobsimilar(req, res) {
   });
 };
 
+// job functions
+function getAllJobs(req, res) {
+  var query = `SELECT id, employer_name, title, 
+              CASE
+                  WHEN remote=0 THEN "No"
+                  WHEN remote=1 THEN "Yes"
+                  ELSE "Unknown"
+              END AS remote
+              FROM HS_Jobs
+              ORDER BY employer_name 
+              LIMIT 5`;
 
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
 
+function getJobs(req, res) {
+  inputSearch = req.params.name;
+  var query = `
+  SELECT id, employer_name, title, 
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs
+  WHERE employer_name LIKE "%${inputSearch}%"
+  LIMIT 5
+  `;
+
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
+function getJobFromID(req, res) {
+  inputSearch = req.params.id;
+  var query = `
+  SELECT id, employer_name, title, text_description, 
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs
+  WHERE id LIKE "%${inputSearch}"
+  `;
+
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
+function getSimilarJobs(req, res) {
+  var inputJob = req.params.job_id;
+  var query = `SELECT id, employer_name, title, text_description
+  FROM HS_Jobs
+  WHERE title IN (
+      SELECT title
+      FROM HS_Jobs
+      WHERE id = ${inputJob}
+  )
+  LIMIT 5`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
+
+function getEstimatedSalary(req, res) {
+  var inputJob = req.params.job_id;
+  var query = `WITH get_title AS (
+    SELECT title
+    FROM HS_Jobs
+    WHERE id=${inputJob}
+    )
+    SELECT AVG(basesalary) as estimatedSalary
+    FROM Salary S JOIN get_title G ON S.title=G.title;`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
+
+function getNoRemoteJobs(req, res) {
+  var inputSearch = req.params.name;
+  var query = `SELECT id, employer_name, title,
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs H
+  WHERE H.employer_name NOT IN (
+      SELECT CompanyName
+      FROM TO_Employees
+      WHERE remote = 1
+      ) AND H.remote = 0
+  AND H.employer_name LIKE "%${inputSearch}%"
+  ORDER BY employer_name`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
 
 
 // employee functions
@@ -359,7 +481,7 @@ function getAllEmployees(req, res) {
   var query = `SELECT employee_id, employeeName, CompanyName, role 
               FROM TO_Employees 
               LIMIT 5`;
-  
+
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -376,7 +498,7 @@ function getEmployees(req, res) {
     WHERE employeeName LIKE "%${inputSearch}%"
     LIMIT 5
   `;
-  
+
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -397,7 +519,7 @@ function getEmployeeFromID(req, res) {
   FROM TO_Employees
   WHERE employee_id = ${inputSearch}
   `;
-  
+
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -441,7 +563,7 @@ function getSimilarEmployees(req, res) {
                 JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
                 ORDER BY employeeName
                 LIMIT 5`;
-  
+
   // connection.query(query, function (err, rows, fields) {
   //   if (err) console.log(err);
   //   else {
@@ -465,7 +587,6 @@ module.exports = {
   getAllCompanies: getAllCompanies,
   getCompanies: getCompanies,
   getCompanyPage: getCompanyPage,
-  getJobs: getJobs,
   getAllEmployees: getAllEmployees,
   getEmployees: getEmployees,
   getEmployeeFromID: getEmployeeFromID,
@@ -480,5 +601,13 @@ module.exports = {
   companyceo,
   employeesimilar,
   companynotremote,
-  jobsimilar
+  jobsimilar,
+
+  getAllJobs: getAllJobs,
+  getJobs: getJobs,
+  getJobFromID: getJobFromID,
+  getSimilarJobs: getSimilarJobs,
+  getEstimatedSalary: getEstimatedSalary,
+  getNoRemoteJobs: getNoRemoteJobs
+
 }
