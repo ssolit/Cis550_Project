@@ -11,7 +11,7 @@ var connection = mysql.createPool(config);
 /* ---- (Dashboard) ---- */
 function getAllCompanies(req, res) {
   var query = `
-  SELECT CompanyName, city, state
+  SELECT CompanyName AS CName, city AS CCity, state AS CState
   FROM TO_companies
 `;
   connection.query(query, function (err, rows, fields) {
@@ -28,9 +28,10 @@ function getCompanies(req, res) {
 
   // TODO: (3) - Edit query below
   var query = `
-    SELECT CompanyName, city, state
+    SELECT company_id AS CId, CompanyName AS CName, city AS CCity, state AS CState, country AS CCountry,
+    employeeSizeRange AS Size, description AS CDescription
     FROM TO_companies
-    WHERE companyName LIKE "${inputSearch}"
+    WHERE companyName LIKE "%${inputSearch}%"
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -60,22 +61,22 @@ function getCompanyPage(req, res) {
 };
 
 /* ---- Part 5 (find Jobs Page) ---- */
-function getJobs(req, res) {
-  var inputSearch = req.params.name;
+// function getJobs(req, res) {
+//   var inputSearch = req.params.name;
 
-  var query = `
-    SELECT id AS id, employer_name AS Company, job_name AS JobName
-    FROM HS_Jobs
-    WHERE employer_name LIKE "${inputSearch}"
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
+//   var query = `
+//     SELECT id AS id, employer_name AS Company, job_name AS JobName
+//     FROM HS_Jobs
+//     WHERE employer_name LIKE "${inputSearch}"
+//   `;
+//   connection.query(query, function (err, rows, fields) {
+//     if (err) console.log(err);
+//     else {
+//       console.log(rows);
+//       res.json(rows);
+//     }
+//   });
+// };
 
 
 /* --- query 1 --- */
@@ -101,7 +102,7 @@ function companypos(req, res) {
   var inputSearch = req.params.role;
 
   var query = `
-    SELECT CompanyName AS CName
+    SELECT CompanyName AS CName, role AS Role
     FROM TO_Employees
     WHERE role LIKE '%${inputSearch}%';
   `;
@@ -119,7 +120,7 @@ function companyopening(req, res) {
   var inputSearch = req.params.role;
 
   var query = `
-    SELECT employer_name AS CName
+    SELECT employer_name AS CName, title AS Role, location_cities_1 AS CCity
     FROM HS_Jobs
     WHERE title LIKE '%${inputSearch}%';
   `;
@@ -134,14 +135,13 @@ function companyopening(req, res) {
 
 /* --- query 4 --- */
 function company(req, res) {
-  var inputSearch = req.params.name;
+  var inputSearch = req.params.id;
 
   var query = `
-    SELECT company_id AS CId, CompanyName AS CName, twitterUrl AS Twitter, linkedInUrl AS Linkedin,
-    facebookUrl AS Facebook, websiteUrl AS Website, city AS CCity, state AS CState, country AS CCountry,
-    location AS CLocation, employeeSizeRange AS Size, description AS CDescription
-    FROM to_companies
-    WHERE companyName LIKE '%${inputSearch}%';
+    SELECT company_id AS CId, CompanyName AS CName, city AS CCity, state AS CState, country AS CCountry,
+    employeeSizeRange AS Size, description AS CDescription
+    FROM TO_companies
+    WHERE company_id = ${inputSearch};
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -151,6 +151,7 @@ function company(req, res) {
     }
   });
 };
+
 
 /* --- query 5 --- */
 function jobopenings(req, res) {
@@ -162,7 +163,7 @@ function jobopenings(req, res) {
       FROM Salary
       GROUP BY company
       HAVING AvgSalary > ${Salary})
-    SELECT employer_name AS CName, title AS JName, '${Location}' AS CCity
+    SELECT employer_name AS CName, title AS Role, '${Location}' AS CCity
     FROM HS_Jobs
     JOIN ExpSalaryTable ON HS_Jobs.employer_name = ExpSalaryTable.company
     WHERE (location_cities_1 LIKE '%${Location}%'
@@ -203,37 +204,38 @@ function job(req, res) {
 
 /* --- query 7 --- */
 function companyceo(req, res) {
-  //var inputSearch = req.params.name;
-  const CName = req.query.CName ? req.query.CName : '%%'
+  var CName = req.params.name;
+  var inputSearch = req.params.id;
 
   var query = `
-    WITH CompanyCEO AS (
-      SELECT employee_id
-      FROM TO_Employees
-      WHERE CompanyName LIKE '%${JName}%' AND role LIKE '%CEO%'
-      ),
-      Dof1 AS (
-          SELECT worksUnder.employee_id
-          FROM worksUnder
-          JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id
-      ),
-      Dof2 AS (
-          SELECT worksUnder.employee_id
-          FROM worksUnder
-          JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id
-      ),
-      Dof3 AS (
-          SELECT worksUnder.employee_id
-          FROM worksUnder
-          JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id
-          ),
-      AllDof3Employees AS (
-          SELECT * FROM CompanyCEO
-          UNION (SELECT * FROM Dof1)
-          UNION (SELECT * FROM Dof2)
-          UNION (SELECT * FROM Dof3)
-      )
-  SELECT employee_id AS EId, employeeName AS EName, role AS ERole, description AS EDescription
+  WITH CompanyCEO AS (
+    SELECT employee_id
+    FROM TO_Employees
+    JOIN TO_companies ON TO_Employees.CompanyName = TO_companies.CompanyName
+    WHERE TO_companies.company_id = ${inputSearch} AND TO_Employees.role LIKE '%CEO%'
+    ),
+    Dof1 AS (
+        SELECT worksUnder.employee_id
+        FROM worksUnder
+        JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id
+    ),
+    Dof2 AS (
+        SELECT worksUnder.employee_id
+        FROM worksUnder
+        JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id
+    ),
+    Dof3 AS (
+        SELECT worksUnder.employee_id
+        FROM worksUnder
+        JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id
+        ),
+    AllDof3Employees AS (
+        SELECT * FROM CompanyCEO
+        UNION (SELECT * FROM Dof1)
+        UNION (SELECT * FROM Dof2)
+        UNION (SELECT * FROM Dof3)
+    )
+  SELECT employeeName AS EName, role AS ERole, description AS EDescription, AllDof3Employees.employee_id AS EId
   FROM TO_Employees
   JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id;
   `;
@@ -348,8 +350,130 @@ function jobsimilar(req, res) {
   });
 };
 
+// job functions
+function getAllJobs(req, res) {
+  var query = `SELECT id, employer_name, title, 
+              CASE
+                  WHEN remote=0 THEN "No"
+                  WHEN remote=1 THEN "Yes"
+                  ELSE "Unknown"
+              END AS remote
+              FROM HS_Jobs
+              ORDER BY employer_name 
+              LIMIT 5`;
 
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
 
+function getJobs(req, res) {
+  inputSearch = req.params.name;
+  var query = `
+  SELECT id, employer_name, title, 
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs
+  WHERE employer_name LIKE "%${inputSearch}%"
+  LIMIT 5
+  `;
+
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
+function getJobFromID(req, res) {
+  inputSearch = req.params.id;
+  var query = `
+  SELECT id, employer_name, title, text_description, 
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs
+  WHERE id LIKE "%${inputSearch}"
+  `;
+
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
+function getSimilarJobs(req, res) {
+  var inputJob = req.params.job_id;
+  var query = `SELECT id, employer_name, title, text_description
+  FROM HS_Jobs
+  WHERE title IN (
+      SELECT title
+      FROM HS_Jobs
+      WHERE id = ${inputJob}
+  )
+  LIMIT 5`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
+
+function getEstimatedSalary(req, res) {
+  var inputJob = req.params.job_id;
+  var query = `WITH get_title AS (
+    SELECT title
+    FROM HS_Jobs
+    WHERE id=${inputJob}
+    )
+    SELECT AVG(basesalary) as estimatedSalary
+    FROM Salary S JOIN get_title G ON S.title=G.title;`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
+
+function getNoRemoteJobs(req, res) {
+  var inputSearch = req.params.name;
+  var query = `SELECT id, employer_name, title,
+  CASE
+    WHEN remote=0 THEN "No"
+    WHEN remote=1 THEN "Yes"
+    ELSE "Unknown"
+  END AS remote
+  FROM HS_Jobs H
+  WHERE H.employer_name NOT IN (
+      SELECT CompanyName
+      FROM TO_Employees
+      WHERE remote = 1
+      ) AND H.remote = 0
+  AND H.employer_name LIKE "%${inputSearch}%"
+  ORDER BY employer_name`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
 
 
 // employee functions
@@ -359,7 +483,7 @@ function getAllEmployees(req, res) {
   var query = `SELECT employee_id, employeeName, CompanyName, role 
               FROM TO_Employees 
               LIMIT 5`;
-  
+
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -376,7 +500,7 @@ function getEmployees(req, res) {
     WHERE employeeName LIKE "%${inputSearch}%"
     LIMIT 5
   `;
-  
+
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -397,7 +521,7 @@ function getEmployeeFromID(req, res) {
   FROM TO_Employees
   WHERE employee_id = ${inputSearch}
   `;
-  
+
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -441,7 +565,7 @@ function getSimilarEmployees(req, res) {
                 JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
                 ORDER BY employeeName
                 LIMIT 5`;
-  
+
   // connection.query(query, function (err, rows, fields) {
   //   if (err) console.log(err);
   //   else {
@@ -465,7 +589,6 @@ module.exports = {
   getAllCompanies: getAllCompanies,
   getCompanies: getCompanies,
   getCompanyPage: getCompanyPage,
-  getJobs: getJobs,
   getAllEmployees: getAllEmployees,
   getEmployees: getEmployees,
   getEmployeeFromID: getEmployeeFromID,
@@ -480,5 +603,13 @@ module.exports = {
   companyceo,
   employeesimilar,
   companynotremote,
-  jobsimilar
+  jobsimilar,
+
+  getAllJobs: getAllJobs,
+  getJobs: getJobs,
+  getJobFromID: getJobFromID,
+  getSimilarJobs: getSimilarJobs,
+  getEstimatedSalary: getEstimatedSalary,
+  getNoRemoteJobs: getNoRemoteJobs
+
 }

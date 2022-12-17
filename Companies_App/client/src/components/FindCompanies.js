@@ -8,6 +8,34 @@ import { Form, FormInput, FormGroup } from "shards-react";
 
 import { Container, Row, Col } from 'react-bootstrap';
 
+import {
+	Table,
+	Pagination,
+	Select,
+	Divider,
+	Slider,
+	Rate 
+  } from 'antd'
+  
+  const companyColumns = [
+	{
+		title: 'Company Name',
+		dataIndex: 'CName',
+		key: 'CName',
+		render: (text, row) => <a href={`/FindCompanies?id=${row.CId}`}>{text}</a>
+	},
+	{
+	  title: 'Role',
+	  dataIndex: 'Role',
+	  key: 'Role'
+	},
+	{
+	  title: 'City',
+	  dataIndex: 'CCity',
+	  key: 'CCity'
+	}
+  ]
+
 export default class FindCompanies extends React.Component {
 	constructor(props) {
 		super(props);
@@ -17,6 +45,7 @@ export default class FindCompanies extends React.Component {
 		this.state = {
 			name: "",
 			foundCompanies: [],
+			companies: [],
 			roleQuery: "",
 			openingQuery: "",
 			locationQuery:"",
@@ -61,11 +90,14 @@ export default class FindCompanies extends React.Component {
 					/* ---- Part 2 (FindCompanies) ---- */
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
+						<div className="name">{company.Role}</div>
+						<div className="name">{}</div>
 					</div>
 				);
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
+					companies: companiesList,
 					foundCompanies: companiesDivs
 				});
 			});
@@ -89,11 +121,14 @@ export default class FindCompanies extends React.Component {
 					/* ---- Part 2 (FindCompanies) ---- */
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
+						<div className="name">{company.Role}</div>
+						<div className="name">{}</div>
 					</div>
 				);
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
+					companies: companiesList,
 					foundCompanies: companiesDivs
 				});
 			});
@@ -121,13 +156,14 @@ export default class FindCompanies extends React.Component {
 					/* ---- Part 2 (FindCompanies) ---- */
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
+						<div className="name">{company.Role}</div>
 						<div className="name">{company.CCity}</div>
-						<div className="name">{}</div>
 					</div>
 				);
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
+					companies: companiesList,
 					foundCompanies: companiesDivs
 				});
 			});
@@ -152,14 +188,15 @@ export default class FindCompanies extends React.Component {
 					// TODO: (6) - Complete the HTML for this map function
 					<div key={i} className="companyResults">
 						<div className="name">{company.CompanyName}</div>
+						<div className="name">{}</div>
 						<div className="name">{company.city}</div>
-						<div className="name">{company.state}</div>
 						{/* <button onClick={this.submitCompanyPage} id="myButton" >Company Page</button> */}
 					</div>
 				);
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
+					companies: companiesList,
 					foundCompanies: companiesDivs
 				});
 			});
@@ -212,21 +249,9 @@ export default class FindCompanies extends React.Component {
                         </FormGroup>
 						</Row>
 						<br></br>
-						{/* <div className="input-container">
-							<input type='text' placeholder="Company Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
-							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
-						</div> */}
 
-						<div className="header-container">
-							<div className="headers">
-								<div className="header"><strong>Company</strong></div>
-								<div className="header"><strong>City</strong></div>
-								<div className="header"><strong>State</strong></div>
-							</div>
-						</div>
-
-						<div className="results-container" id="results">
-							{this.state.foundCompanies}
+						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+							<Table dataSource={this.state.companies} columns={companyColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
 						</div>
 					</div>
 				</div>

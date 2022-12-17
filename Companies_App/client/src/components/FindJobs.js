@@ -1,66 +1,140 @@
 import React from 'react';
 import PageNavbar from './PageNavbar';
-import '../style/FindCompanies.css';
+import '../style/FindJobs.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+	Space,
+	Table
+} from 'antd'
+
+
+
+const jobColumns = [
+	{
+		title: 'Job ID',
+		dataIndex: 'id',
+		key: 'id',
+		render: (text, row) => <a href={`/JobPage?id=${row.id}`}>{text}</a>
+	},
+	{
+		title: 'Company Name',
+		dataIndex: 'employer_name',
+		key: 'employer_name',
+	},
+	{
+		title: 'Title',
+		dataIndex: 'title',
+		key: 'title',
+	},
+	{
+		title: 'Remote',
+		dataIndex: 'remote',
+		key: 'remote',
+	}
+]
 
 export default class FindJobs extends React.Component {
 	constructor(props) {
 		super(props);
-
-		// State maintained by this React component is the inputted search,
-		// and the list of companies of that search.
 		this.state = {
-			companyName: "",
-			foundJobs: []
+			j_id: "",
+			name: "",
+			foundJobs: [],
+			rawfoundJobs: [],
+			checkbox: true
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
+		this.handleCheckedChange = this.handleCheckedChange.bind(this);
 	}
 
 	handleSearchChange(e) {
 		this.setState({
-			companyName: e.target.value
+			name: e.target.value
 		});
 	}
 
-	submitSearch() {
-		/* ---- Part 2 (FindCompanies) ---- */
-		// TODO: (4) - Complete the fetch for this function
-		// Hint: Name of search submitted is contained in `this.state.search`.
+	handleCheckedChange(e) {
+		console.log(e.target.checked)
+		this.setState({ checkbox: !e.target.checked });
 
-		fetch(`http://localhost:8081/jobs/${this.state.companyName}`,
+		// console.log(this.state.checkbox)
+	}
+
+	getRawSearchResults() {
+		// if not checked, do this fetch. otherwise, no remote jobs
+		fetch(`http://localhost:8081/jobs/${this.state.name}`,
 			{
 				method: "GET"
 			}).then(res => {
 				return res.json();
 			}, err => {
 				console.log(err);
-			}).then(jobsList => {
-				console.log(jobsList); //displays your JSON object in the console
-				let jobsDivs = jobsList.map((job, i) =>
-					/* ---- Part 2 (FindCompanies) ---- */
-					// TODO: (6) - Complete the HTML for this map function
-					<div key={i} className="companyResults">
-						<div className="name">{job.id}</div>
-						<div className="name">{job.Company}</div>
-						<div className="name">{job.JobName}</div>
-						{/* <button onClick={this.submitJobPage} id="myButton" >Job Page</button> */}
-					</div>
-				);
+			})
+	}
 
-				//This saves our HTML representation of the data into the state, which we can call in our render function
-				this.setState({
-					foundJobs: jobsDivs
+	submitSearch() {
+		if (this.state.checkbox) {
+			// if not checked, do this fetch. otherwise, no remote jobs
+			fetch(`http://localhost:8081/jobs/${this.state.name}`,
+				{
+					method: "GET"
+				}).then(res => {
+					return res.json();
+				}, err => {
+					console.log(err);
+				}).then(jobsList => {
+					console.log(jobsList); //displays your JSON object in the console
+					console.log(jobsList[0].employer_name);
+					console.log(jobsList[0].title);
+					let jobsDivs = jobsList.map((job, i) =>
+						<div key={i} className="jobResults">
+							<div className="name">{job.id}</div>
+							<div className="name">{job.employer_name}</div>
+							<div className="name">{job.title}</div>
+							<div className="name">{job.remote}</div>
+						</div>
+					);
+
+					//This saves our HTML representation of the data into the state, which we can call in our render function
+					this.setState({
+						rawfoundJobs: jobsList,
+						foundJobs: jobsDivs
+					});
 				});
-			});
+		} else {
+
+			fetch(`http://localhost:8081/getNoRemoteJobs/${this.state.name}`,
+				{
+					method: "GET"
+				}).then(res => {
+					return res.json();
+				}, err => {
+					console.log(err);
+				}).then(jobsList => {
+					console.log(jobsList); //displays your JSON object in the console
+					console.log(jobsList[0].employer_name);
+					console.log(jobsList[0].title);
+					let jobsDivs = jobsList.map((job, i) =>
+						<div key={i} className="jobResults">
+							<div className="name">{job.id}</div>
+							<div className="name">{job.employer_name}</div>
+							<div className="name">{job.title}</div>
+							<div className="name">{job.remote}</div>
+						</div>
+					);
+
+					//This saves our HTML representation of the data into the state, which we can call in our render function
+					this.setState({
+						rawfoundJobs: jobsList,
+						foundJobs: jobsDivs
+					});
+				});
+		}
 	}
 
-	submitJobPage() {
-		document.getElementById("myButton").onclick = function () {
-			window.location.href = `http://localhost:3000/jobpage/${this.state.jobID}`
-		};
-	}
+
 
 
 	render() {
@@ -75,24 +149,37 @@ export default class FindJobs extends React.Component {
 						<div className="h5">Find Jobs</div>
 						<div className="input-container">
 							<input type='text' placeholder="Company Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
-							{/* ---- Part 2 (FindCompanies) ---- */}
-							{/* TODO: (5) - Edit button element below */}
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
-						</div>
-						<div className="header-container">
-							<div className="headers">
-								<div className="header"><strong>Job ID</strong></div>
-								<div className="header"><strong>Company</strong></div>
-								<div className="header"><strong>Job Title</strong></div>
+							<div>
+								<label>
+
+									<input type="checkbox" onClick={this.handleCheckedChange} checked={!this.state.checkbox}></input>
+									No Remote Jobs
+								</label>
 							</div>
 						</div>
 
-						<div className="results-container" id="results">
-							{this.state.foundJobs}
+						{/* hyperlinks */}
+						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+							<h3>Jobs</h3>
+							<Table dataSource={this.state.rawfoundJobs} columns={jobColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 						</div>
+
 					</div>
 				</div>
 			</div>
 		);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
