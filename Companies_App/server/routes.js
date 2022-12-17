@@ -534,37 +534,37 @@ function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
   console.log(`in routes.js/getSimilarEmployees. input = ${inputPerson}`)
   var query = `WITH desiredRole AS (
-                    SELECT role
-                    FROM TO_Employees
-                    WHERE employee_id = ${inputPerson}
-                    ),
-                    deg0 AS (
-                    SELECT employee_id
-                    FROM TO_Employees JOIN desiredRole d ON TO_Employees.role = d.role
-                    LIMIT 5
-                    ),
-                    deg1 AS (
-                        SELECT employee_id
-                        FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss
-                        UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)
-                        LIMIT 5
-                    ),
-                    deg2 AS (
-                        SELECT employee_id
-                        FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss
-                        UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)
-                        LIMIT 5
-                    ),
-                    alldegs AS (
-                            SELECT * FROM deg0
-                            UNION (SELECT * FROM deg1)
-                            UNION (SELECT * FROM deg2)
-                    )
-                SELECT TO_Employees.employee_id AS employee_id, employeeName, CompanyName, role
-                FROM TO_Employees
-                JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
-                ORDER BY employeeName
-                LIMIT 5`;
+                  SELECT role
+                  FROM TO_Employees
+                  WHERE employee_id = ${inputPerson}
+                  ),
+                  deg0 AS (
+                  SELECT employee_id
+                  FROM TO_Employees JOIN desiredRole d ON TO_Employees.role = d.role
+                  LIMIT 5
+                  ),
+                  deg1 AS (
+                      SELECT employee_id
+                      FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss
+                      UNION ALL (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)
+                      LIMIT 5
+                  ),
+                  deg2 AS (
+                      SELECT employee_id
+                      FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss
+                      UNION ALL (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)
+                      LIMIT 5
+                  ),
+                  alldegs AS (
+                          SELECT * FROM deg0
+                          UNION ALL (SELECT * FROM deg1)
+                          UNION ALL (SELECT * FROM deg2)
+                  )
+              SELECT DISTINCT (TO_Employees.employee_id) AS employee_id, employeeName, CompanyName, role
+              FROM TO_Employees
+              JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
+              ORDER BY employeeName
+              LIMIT 5`;
 
   // connection.query(query, function (err, rows, fields) {
   //   if (err) console.log(err);
