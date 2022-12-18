@@ -33,6 +33,7 @@ app.get('/jobs/:title', routes.getJobs);
 app.get('/jobFromId/:id', routes.getJobFromID);
 app.get('/jobsSimilar/:job_id', routes.getSimilarJobs);
 app.get('/estimatedSalary/:job_id', routes.getEstimatedSalary);
+/* Complex - get jobs posted by companies where all workers are not remote */
 app.get('/getNoRemoteJobs/:title', routes.getNoRemoteJobs);
 
 
