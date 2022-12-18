@@ -315,9 +315,8 @@ function companynotremote(req, res) {
 };
 
 /* --- query 10 --- */
-function jobsimilar(req, res) {
-  var EId = req.params.name;
-  //const EId = req.query.EId ? req.query.EId : '%%'
+function openJobSameTitle(req, res) {
+  var EId = req.params.id;
 
   var query = `
     WITH eq_role_postings AS (SELECT open_sals.role, job_id, salary, company
@@ -360,7 +359,7 @@ function getAllJobs(req, res) {
               END AS remote
               FROM HS_Jobs
               ORDER BY employer_name 
-              LIMIT 5`;
+              `;
 
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -480,7 +479,7 @@ function getNoRemoteJobs(req, res) {
 function getAllEmployees(req, res) {
   var query = `SELECT employee_id, employeeName, CompanyName, role 
               FROM TO_Employees 
-              LIMIT 5`;
+              `;
 
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -496,7 +495,7 @@ function getEmployees(req, res) {
     SELECT employee_id, employeeName, CompanyName, role
     FROM TO_Employees
     WHERE employeeName LIKE "%${inputSearch}%"
-    LIMIT 5
+    
   `;
 
   connection.query(query, function (err, rows, fields) {
@@ -601,13 +600,14 @@ module.exports = {
   companyceo,
   employeesimilar,
   companynotremote,
-  jobsimilar,
+
 
   getAllJobs: getAllJobs,
   getJobs: getJobs,
   getJobFromID: getJobFromID,
   getSimilarJobs: getSimilarJobs,
   getEstimatedSalary: getEstimatedSalary,
-  getNoRemoteJobs: getNoRemoteJobs
+  getNoRemoteJobs: getNoRemoteJobs,
+  openJobSameTitle: openJobSameTitle,
 
 }

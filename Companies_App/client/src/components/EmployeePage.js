@@ -4,38 +4,38 @@ import '../style/FindEmployees.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-    Table,
-    Pagination,
-    Select,
-    Row,
-    Col,
-    Divider,
-    Slider,
-    Rate 
+	Table,
+	Pagination,
+	Select,
+	Row,
+	Col,
+	Divider,
+	Slider,
+	Rate
 } from 'antd'
 
 
 
 const employeeColumns = [
-    {
-        title: 'Page Employee Name',
-        dataIndex: 'employeeName',
-        key: 'employeeName',
-        // sorter: (a, b) => a.employeeName.localeCompare(b.employeeName),
-        render: (text, row) => <a href={`/EmployeePage?id=${row.employee_id}`}>{text}</a>
-    },
 	{
-        title: 'Company Name',
-        dataIndex: 'CompanyName',
-        key: 'CompanyName',
-        // sorter: (a, b) => a.CompanyName.localeCompare(b.CompanyName),
-    },
+		title: 'Page Employee Name',
+		dataIndex: 'employeeName',
+		key: 'employeeName',
+		// sorter: (a, b) => a.employeeName.localeCompare(b.employeeName),
+		render: (text, row) => <a href={`/EmployeePage?id=${row.employee_id}`}>{text}</a>
+	},
 	{
-        title: 'Page Role',
-        dataIndex: 'role',
-        key: 'role',
-        // sorter: (a, b) => a.role.localeCompare(b.role),
-    }
+		title: 'Company Name',
+		dataIndex: 'CompanyName',
+		key: 'CompanyName',
+		// sorter: (a, b) => a.CompanyName.localeCompare(b.CompanyName),
+	},
+	{
+		title: 'Page Role',
+		dataIndex: 'role',
+		key: 'role',
+		// sorter: (a, b) => a.role.localeCompare(b.role),
+	}
 ]
 
 const specificEmployeeColumns = employeeColumns.concat([
@@ -59,7 +59,8 @@ export default class EmployeePage extends React.Component {
 			// foundEmployees: [],
 			// rawfoundEmployees: [],
 			similarEmployees: [],
-			employeeDetails: [{"description": "Unavailable"}],
+			employeeDetails: [{ "description": "Unavailable" }],
+			openJobs: []
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -83,7 +84,7 @@ export default class EmployeePage extends React.Component {
 				})
 				// console.log(this.state.employeeDetails[0]["description"])
 			}
-		);
+			);
 		fetch(`http://localhost:8081/employeesSimilar/${this.state.e_id}`,
 			{
 				method: "GET"
@@ -96,8 +97,21 @@ export default class EmployeePage extends React.Component {
 					similarEmployees: simEmplList,
 				})
 			}
-		);
-		
+			);
+		fetch(`http://localhost:8081/openJobSameTitle/${this.state.e_id}`,
+			{
+				method: "GET"
+			}).then(res => {
+				return res.json();
+			}, err => {
+				console.log(err);
+			}).then(openJobList => {
+				this.setState({
+					openJobs: openJobList,
+				})
+			}
+			);
+
 
 
 	}
@@ -157,24 +171,29 @@ export default class EmployeePage extends React.Component {
 					<br></br>
 					<div className="jumbotron findFriend-headspace"> {/* EmployeePage) big grey container ---- this.state.employeeDetails[0]["description"] */}
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-								<h3>Employee Details</h3>
-								<Table dataSource={this.state.employeeDetails} columns={specificEmployeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+							<h3>Employee Details</h3>
+							<Table dataSource={this.state.employeeDetails} columns={specificEmployeeColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 						</div>
 						<p>{this.state.employeeDetails[0]["description"]} </p>
-						
+
 					</div>
-					
+
 
 					{/* hyperlinks */}
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<h3>Similar Employees</h3>
-							<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+						<h3>Similar Employees</h3>
+						<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 					</div>
 
-					
+					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+						<h3>Job Openings for this Role</h3>
+						<Table dataSource={this.state.openJobs} columns={employeeColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
+					</div>
+
+
 
 				</div>
-						
+
 			</div>
 		);
 	}

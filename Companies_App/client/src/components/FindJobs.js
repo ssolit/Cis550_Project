@@ -153,7 +153,7 @@ export default class FindJobs extends React.Component {
 							<div>
 								<label>
 
-									<input type="checkbox" onClick={this.handleCheckedChange} checked={!this.state.checkbox}></input>
+									<input type="checkbox" class="check-space" onClick={this.handleCheckedChange} checked={!this.state.checkbox}></input>
 									No Remote Jobs
 								</label>
 							</div>

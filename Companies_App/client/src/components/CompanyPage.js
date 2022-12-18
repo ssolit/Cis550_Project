@@ -4,86 +4,86 @@ import '../style/Dashboard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-  Table,
-  Pagination,
-  Select,
-  Row,
-  Col,
-  Divider,
-  Slider,
-  Rate 
+	Table,
+	Pagination,
+	Select,
+	Row,
+	Col,
+	Divider,
+	Slider,
+	Rate
 } from 'antd'
 
 const companyColumns = [
-  {
-      title: 'Name',
-      dataIndex: 'CName',
-      key: 'CName',
-      render: (text, row) => <a href={`/CompanyPage?id=${row.CId}`}>{text}</a>
-  },
-  {
-    title: 'City',
-    dataIndex: 'CCity',
-    key: 'CCity'
-  },
-  {
-    title: 'State',
-    dataIndex: 'CState',
-    key: 'CState'
-  },
-  {
-    title: 'Size',
-    dataIndex: 'Size',
-    key: 'Size'
-  },
-  {
-    title: 'Description',
-    dataIndex: 'CDescription',
-    key: 'CDescription'
-  }
+	{
+		title: 'Name',
+		dataIndex: 'CName',
+		key: 'CName',
+		render: (text, row) => <a href={`/CompanyPage?id=${row.CId}`}>{text}</a>
+	},
+	{
+		title: 'City',
+		dataIndex: 'CCity',
+		key: 'CCity'
+	},
+	{
+		title: 'State',
+		dataIndex: 'CState',
+		key: 'CState'
+	},
+	{
+		title: 'Size',
+		dataIndex: 'Size',
+		key: 'Size'
+	},
+	{
+		title: 'Description',
+		dataIndex: 'CDescription',
+		key: 'CDescription'
+	}
 ];
 
 const leadershipColumns = [
-  {
-      title: 'Name',
-      dataIndex: 'EName',
-      key: 'EName',
-      render: (text, row) => <a href={`/EmployeePage?id=${row.EId}`}>{text}</a>
-  },
-  {
-    title: 'Role',
-    dataIndex: 'ERole',
-    key: 'ERole'
-  },
-  {
-    title: 'Description',
-    dataIndex: 'EDescription',
-    key: 'EDescription'
-  }
+	{
+		title: 'Name',
+		dataIndex: 'EName',
+		key: 'EName',
+		render: (text, row) => <a href={`/EmployeePage?id=${row.EId}`}>{text}</a>
+	},
+	{
+		title: 'Role',
+		dataIndex: 'ERole',
+		key: 'ERole'
+	},
+	{
+		title: 'Description',
+		dataIndex: 'EDescription',
+		key: 'EDescription'
+	}
 ];
 
 export default class CompanyPage extends React.Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    // The state maintained by this React Component. 
-    // This component maintains the list of companies.
-    this.state = {
-      //companies: []
-      CId: window.location.search ? window.location.search.substring(1).split('=')[1] : 0,
+		// The state maintained by this React Component. 
+		// This component maintains the list of companies.
+		this.state = {
+			//companies: []
+			CId: window.location.search ? window.location.search.substring(1).split('=')[1] : 0,
 			name: "",
 			companyCEO: [],
-			companyDetails: [{"CDescription": "Unavailable"}],
-    }
+			companyDetails: [{ "CDescription": "Unavailable" }],
+		}
 
-    this.handleSearchChange = this.handleSearchChange.bind(this);
+		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
 		console.log("CId: " + this.state.CId)
 		console.log(this.state.companyDetails[0]["CDescription"])
-  }
+	}
 
-  // React function that is called when the page load.
-  componentDidMount() {
+	// React function that is called when the page load.
+	componentDidMount() {
 		fetch(`http://localhost:8081/companyInfo/${this.state.CId}`,
 			{
 				method: "GET"
@@ -96,7 +96,7 @@ export default class CompanyPage extends React.Component {
 					companyDetails: coDetails,
 				})
 			}
-		);
+			);
 		fetch(`http://localhost:8081/companyceo/${this.state.CId}`,
 			{
 				method: "GET"
@@ -109,18 +109,18 @@ export default class CompanyPage extends React.Component {
 					companyCEO: ceoList,
 				})
 			}
-		);
+			);
 	}
 
-  handleSearchChange(e) {
+	handleSearchChange(e) {
 		this.setState({
 			name: e.target.value
 		});
 	}
 
-  submitSearch() {
+	submitSearch() {
 		console.log("entered submitSearch")
-    fetch(`http://localhost:8081/companies/${this.state.name}`,
+		fetch(`http://localhost:8081/companies/${this.state.name}`,
 			{
 				method: "GET"
 			}).then(res => {
@@ -141,36 +141,36 @@ export default class CompanyPage extends React.Component {
 
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
-          companies: companiesList,
+					companies: companiesList,
 					foundCompanies: companiesDivs
 				});
 			});
 	}
 
 
-  render() {
-    return (
-      <div className="Recommendations">
+	render() {
+		return (
+			<div className="Recommendations">
 				<PageNavbar active="Companies" />
 
 				<div className="container recommendations-container">
 					<br></br>
 					<div className="jumbotron findFriend-headspace">
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-								<h3>Company Details</h3>
-								<Table dataSource={this.state.companyDetails} columns={companyColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+							<h3>Company Details</h3>
+							<Table dataSource={this.state.companyDetails} columns={companyColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 						</div>
-						<p>{this.state.companyDetails[0]["CDescription"]} </p>
+						{/* <p>{this.state.companyDetails[0]["CDescription"]} </p> */}
 					</div>
-					
+
 					{/* hyperlinks */}
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<h3>Company Leadership</h3>
-							<Table dataSource={this.state.companyCEO} columns={leadershipColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+						<h3>Company Leadership</h3>
+						<Table dataSource={this.state.companyCEO} columns={leadershipColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 					</div>
 
 				</div>
 			</div>
-    );
-  }
+		);
+	}
 }

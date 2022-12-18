@@ -48,3 +48,7 @@
   .input-container .submit-btn:active {
 	background: #226f54;
   }
+
+  .check-space{
+	margin-right: 15px;
+  }

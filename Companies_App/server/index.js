@@ -34,6 +34,7 @@ app.get('/jobsSimilar/:job_id', routes.getSimilarJobs);
 app.get('/estimatedSalary/:job_id', routes.getEstimatedSalary);
 app.get('/getNoRemoteJobs/:title', routes.getNoRemoteJobs);
 
+
 /* company roles */
 app.get('/companypos/:role', routes.companypos);
 
@@ -52,8 +53,9 @@ app.get('/companyceo/:id', routes.companyceo);
 
 app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:name', routes.getEmployees);
-app.get('/employeeFromId/:id', routes.getEmployeeFromID)
+app.get('/employeeFromId/:id', routes.getEmployeeFromID);
 app.get('/employeesSimilar/:employee_id', routes.getSimilarEmployees);
+app.get('/openJobSameTitle/:id', routes.openJobSameTitle);
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
