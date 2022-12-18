@@ -219,11 +219,11 @@ export default class FindCompanies extends React.Component {
 				<div className="container recommendations-container">
 					<br></br>
 					<div className="jumbotron findFriend-headspace">
-					<div className="h5">Find Companies With Jobs</div>
+					<div className="h5">Find Companies By Job Information</div>
 						<Row>
 						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Company With Role</label>
-                            <FormInput placeholder="Role" value={this.state.roleQuery} onChange={this.handleRoleQueryChange} />
+                            <label>Company With Job Title</label>
+                            <FormInput placeholder="Title" value={this.state.roleQuery} onChange={this.handleRoleQueryChange} />
 							<br></br>
 							<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitRoleQuery}>Submit</button>
                         </FormGroup>
