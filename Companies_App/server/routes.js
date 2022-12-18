@@ -176,13 +176,6 @@ function companyceo(req, res) {
 
 
 /* Job Queries */
-
-
-
-
-
-
-// job routes
 function getAllJobs(req, res) {
   var query = `SELECT id, employer_name, title, 
               CASE
@@ -280,7 +273,6 @@ function getEstimatedSalary(req, res) {
 
 };
 
-/* --- query 9 --- */
 function getNoRemoteJobs(req, res) {
   var inputSearch = req.params.title;
   var query = `SELECT id, employer_name, title,
@@ -309,7 +301,7 @@ function getNoRemoteJobs(req, res) {
 
 
 
-// employee routes
+/* Employee Queries */
 function getAllEmployees(req, res) {
   var query = `SELECT employee_id, employeeName, CompanyName, role 
               FROM TO_Employees 
@@ -440,89 +432,6 @@ function openJobSameTitle(req, res) {
     }
   });
 };
-
-
-
-// function employeesubs(req, res) {
-//   var inputSearch = req.params.name;
-
-//   var query = `
-//     SELECT employee_id AS EId
-//     FROM TO_Employees JOIN worksUnder wU ON TO_Employees.employee_id = wU.employee_id
-//     WHERE parent_id = '%${inputSearch}%';
-//   `;
-//   connection.query(query, function (err, rows, fields) {
-//     if (err) console.log(err);
-//     else {
-//       console.log(rows);
-//       res.json(rows);
-//     }
-//   });
-// };
-
-// function job(req, res) {
-//   const JName = req.query.JName ? req.query.JName : '%%'
-
-//   var query = `
-//     SELECT AVG(basesalary) AS Salary
-//     FROM Salary s
-//     JOIN HS_Jobs h ON h.employer_name = s.company
-//       AND h.job_name = s.title
-//     WHERE h.job_name LIKE '%${JName}%';
-//   `;
-//   connection.query(query, function (err, rows, fields) {
-//     if (err) console.log(err);
-//     else {
-//       console.log(rows);
-//       res.json(rows);
-//     }
-//   });
-// };
-
-
-// function employeesimilar(req, res) {
-//   //var inputSearch = req.params.name;
-//   const ERole = req.query.ERole ? req.query.ERole : '%%'
-
-//   var query = `
-//     WITH deg0 AS (
-//       SELECT employee_id
-//       FROM TO_Employees
-//       WHERE role = '%${ERole}%'
-//       LIMIT 5
-//       ),
-//       deg1 AS (
-//           SELECT employee_id
-//           FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss
-//           UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)
-//           LIMIT 5
-//       ),
-//       deg2 AS (
-//           SELECT employee_id
-//           FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss
-//           UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)
-//           LIMIT 5
-//       ),
-//       alldegs AS (
-//               SELECT * FROM deg0
-//               UNION (SELECT * FROM deg1)
-//               UNION (SELECT * FROM deg2)
-//       )
-//     SELECT employee_id AS EId, employeeName AS EName, CompanyName AS CName, TO_Employees.role AS ERole, 
-//            roleAutoFunction AS ERoleFunction, TO_Employees.description AS EDescription
-//     FROM TO_Employees
-//     JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
-//     ORDER BY employeeName
-//     LIMIT 5;
-//   `;
-//   connection.query(query, function (err, rows, fields) {
-//     if (err) console.log(err);
-//     else {
-//       console.log(rows);
-//       res.json(rows);
-//     }
-//   });
-// };
 
 
 // The exported functions, which can be accessed in index.js.
