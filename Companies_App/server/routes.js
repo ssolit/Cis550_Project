@@ -75,8 +75,9 @@ function companypos(req, res) {
   var inputSearch = req.params.role;
 
   var query = `
-    SELECT CompanyName AS CName, role AS Role
+    SELECT TO_Employees.CompanyName AS CName, TO_Employees.role AS Role, TO_companies.city AS CCity
     FROM TO_Employees
+    JOIN TO_companies ON TO_Employees.CompanyName = TO_companies.CompanyName
     WHERE role LIKE '%${inputSearch}%';
   `;
   connection.query(query, function (err, rows, fields) {

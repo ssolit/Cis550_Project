@@ -86,7 +86,7 @@ export default class FindCompanies extends React.Component {
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
 						<div className="name">{company.Role}</div>
-						<div className="name">{ }</div>
+						<div className="name">{company.CCity}</div>
 					</div>
 				);
 
@@ -117,7 +117,7 @@ export default class FindCompanies extends React.Component {
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
 						<div className="name">{company.Role}</div>
-						<div className="name">{ }</div>
+						<div className="name">{company.CCity}</div>
 					</div>
 				);
 
