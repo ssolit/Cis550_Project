@@ -81,12 +81,11 @@ export default class EmployeePage extends React.Component {
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
-		console.log("e_id: " + this.state.e_id)
-		console.log(this.state.employeeDetails[0]["description"])
+		console.log("In EmployeePage. e_id: " + this.state.e_id)
 	}
 
 	componentDidMount() {
-		console.log("in EmployeePage componentDidMount. wait 5 sec")
+		console.log("in EmployeePage componentDidMount.")
 		fetch(`http://localhost:8081/employeeFromId/${this.state.e_id}`,
 			{
 				method: "GET"
@@ -118,6 +117,7 @@ export default class EmployeePage extends React.Component {
 			{
 				method: "GET"
 			}).then(res => {
+				console.log("openJobSameTitle then 1")
 				return res.json();
 			}, err => {
 				console.log(err);
