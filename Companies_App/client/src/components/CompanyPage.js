@@ -45,7 +45,7 @@ const leadershipColumns = [
 	},
 	{
 		title: 'Role',
-		dataIndex: 'ERole',
+		dataIndex: 'Role',
 		key: 'Role'
 	},
 	{
@@ -141,6 +141,7 @@ export default class CompanyPage extends React.Component {
 
 
 	render() {
+		console.log(this.state.companyCEO)
 		return (
 			<div className="Recommendations">
 				<PageNavbar active="Companies" />
