@@ -155,7 +155,7 @@ function company(req, res) {
 
 /* --- query 5 --- */
 function jobopenings(req, res) {
-  const Location = req.query.Location ? req.query.Location : '%%'
+  const Location = req.query.Location ? req.query.Location : ''
   const Salary = req.query.Salary ? req.query.Salary : 0
 
   var query = `
