@@ -4,18 +4,11 @@ import '../style/FindEmployees.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-    Table,
-    Pagination,
-    Select,
-    Row,
-    Col,
-    Divider,
-    Slider,
-    Rate 
+    Table
 } from 'antd'
 
 
-
+// columns for Employees table
 const employeeColumns = [
     {
         title: 'Employee Name',
@@ -45,9 +38,7 @@ export default class FindEmployees extends React.Component {
 		// State maintained by this React component is the inputted search,
 		// and the list of employees of that search.
 		this.state = {
-			e_id: "",
 			name: "",
-			foundEmployees: [],
 			rawfoundEmployees: [],
 		}
 
@@ -55,70 +46,33 @@ export default class FindEmployees extends React.Component {
 		this.submitSearch = this.submitSearch.bind(this);
 	}
 
-	// componentDidMount() {
-	// 	getAllEmployees(null, null).then(res => {
-	// 		this.setState({ foundEmployees: res.results })
-	// 	  })
-	// }
-
+	// updates input for serach bar on typing
 	handleSearchChange(e) {
 		this.setState({
 			name: e.target.value
 		});
 	}
 
-	getRawSearchResults() {
-		fetch(`http://localhost:8081/employees/${this.state.name}`,
-			{
-				method: "GET"
-			}).then(res => {
-				console.log("submitSearch then 1");
-				return res.json();
-			}, err => {
-				console.log(err);
-			})
-	}
-
+	// runs when Sumbit search button is clicked
 	submitSearch() {
-		/* ---- Part 2 (FindEmployees) ---- */
-		// TODO: (4) - Complete the fetch for this function
-		// Hint: Name of search submitted is contained in `this.state.search`.
-		console.log("entered submitSearch")
-
 		fetch(`http://localhost:8081/employees/${this.state.name}`,
 			{
 				method: "GET"
 			}).then(res => {
-				console.log("submitSearch then 1");
 				return res.json();
 			}, err => {
 				console.log(err);
 			}).then(employeesList => {
-				console.log("submitSearch then 2");
-				console.log(employeesList); //displays your JSON object in the console
-				let employeesDivs = employeesList.map((employee, i) =>
-					/* ---- Part 2 (FindEmployees) ---- */
-					// TODO: (6) - Complete the HTML for this map function
-					<div key={i} className="employeeResults">
-						<div className="name">{employee.employeeName}</div>
-						<div className="name">{employee.CompanyName}</div>
-						<div className="name">{employee.role}</div>
-						{/* <button onClick={this.submitEmployeePage} id="myButton" >Employee Page</button> */}
-					</div>
-				);
-
 				//This saves our HTML representation of the data into the state, which we can call in our render function
 				this.setState({
 					rawfoundEmployees: employeesList,
-					foundEmployees: employeesDivs
 				});
-				// console.log(this.state.rawfoundEmployees);
 			});
 	}
 
 
 
-
+	// HTML for rendering page
 	render() {
 
 		return (
@@ -131,12 +85,10 @@ export default class FindEmployees extends React.Component {
 						<div className="h5">Find Employees</div>
 						<div className="input-container">
 							<input type='text' placeholder="Employee Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
-							{/* ---- Part 2 (FindEmployees) ---- */}
-							{/* TODO: (5) - Edit button element below */}
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
 						</div>
 
-						{/* hyperlinks */}
+						{/* Results table with hyperlinks */}
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 							<h3>Employees</h3>
 							<Table dataSource={this.state.rawfoundEmployees} columns={employeeColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
