@@ -136,35 +136,35 @@ function companyceo(req, res) {
   console.log("started ceo query on ")
   var query = `
   WITH CompanyCEO AS (
-    SELECT employee_id
-    FROM TO_Employees
-    JOIN TO_companies ON TO_Employees.CompanyName = TO_companies.CompanyName
-    WHERE TO_companies.company_id = ${inputSearch} AND TO_Employees.role LIKE '%CEO%'
-    ),
-    Dof1 AS (
-        SELECT worksUnder.employee_id
-        FROM worksUnder
-        JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id
-    ),
-    Dof2 AS (
-        SELECT worksUnder.employee_id
-        FROM worksUnder
-        JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id
-    ),
-    Dof3 AS (
-        SELECT worksUnder.employee_id
-        FROM worksUnder
-        JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id
-        ),
-    AllDof3Employees AS (
-        SELECT * FROM CompanyCEO
-        UNION ALL (SELECT * FROM Dof1)
-        UNION ALL (SELECT * FROM Dof2)
-        UNION ALL (SELECT * FROM Dof3)
-    )
- SELECT DISTINCT employeeName AS Name, role AS Role, description AS Description
- FROM TO_Employees
- JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id; 
+      SELECT employee_id
+      FROM TO_Employees
+      JOIN TO_companies ON TO_Employees.CompanyName = TO_companies.CompanyName
+      WHERE TO_companies.company_id = ${inputSearch} AND TO_Employees.role LIKE '%CEO%'
+      ),
+      Dof1 AS (
+          SELECT worksUnder.employee_id
+          FROM worksUnder
+          JOIN CompanyCEO ON worksUnder.parent_id = CompanyCEO.employee_id
+      ),
+      Dof2 AS (
+          SELECT worksUnder.employee_id
+          FROM worksUnder
+          JOIN Dof1 ON Dof1.employee_id = worksUnder.parent_id
+      ),
+      Dof3 AS (
+          SELECT worksUnder.employee_id
+          FROM worksUnder
+          JOIN Dof2 ON Dof2.employee_id = worksUnder.parent_id
+          ),
+      AllDof3Employees AS (
+          SELECT * FROM CompanyCEO
+          UNION ALL (SELECT * FROM Dof1)
+          UNION ALL (SELECT * FROM Dof2)
+          UNION ALL (SELECT * FROM Dof3)
+      )
+  SELECT DISTINCT employeeName AS Name, role AS Role, description AS Description
+  FROM TO_Employees
+  JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id; 
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);

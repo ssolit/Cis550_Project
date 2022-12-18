@@ -39,19 +39,19 @@ const companyColumns = [
 const leadershipColumns = [
 	{
 		title: 'Name',
-		dataIndex: 'EName',
-		key: 'EName',
+		dataIndex: 'Name',
+		key: 'Name',
 		render: (text, row) => <a href={`/EmployeePage?id=${row.EId}`}>{text}</a>
 	},
 	{
 		title: 'Role',
 		dataIndex: 'ERole',
-		key: 'ERole'
+		key: 'Role'
 	},
 	{
 		title: 'Description',
-		dataIndex: 'EDescription',
-		key: 'EDescription'
+		dataIndex: 'Description',
+		key: 'Description'
 	}
 ];
 
@@ -92,6 +92,7 @@ export default class CompanyPage extends React.Component {
 			{
 				method: "GET"
 			}).then(res => {
+				console.log("CompanyPage.js companyceo here 1")
 				return res.json();
 			}, err => {
 				console.log(err);
