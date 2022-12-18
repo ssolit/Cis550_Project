@@ -502,7 +502,6 @@ function getSimilarEmployees(req, res) {
 /* --- query 10 --- */
 function openJobSameTitle(req, res) {
   var EId = req.params.id;
-  console.log(`in routes.js/getSimilarEmployees. input = ${EId}`)
   var query = `
     WITH eq_role_postings AS (SELECT open_sals.role, job_id, salary, company
       FROM (SELECT *

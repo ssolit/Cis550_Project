@@ -81,11 +81,9 @@ export default class EmployeePage extends React.Component {
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
-		console.log("In EmployeePage. e_id: " + this.state.e_id)
 	}
 
 	componentDidMount() {
-		console.log("in EmployeePage componentDidMount.")
 		fetch(`http://localhost:8081/employeeFromId/${this.state.e_id}`,
 			{
 				method: "GET"
@@ -125,8 +123,6 @@ export default class EmployeePage extends React.Component {
 				this.setState({
 					openJobs: openJobList,
 				})
-				console.log("top job")
-				console.log(openJobList)
 			}
 			);
 		
@@ -205,7 +201,7 @@ export default class EmployeePage extends React.Component {
 					</div>
 
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-						<h3>Job Openings for this Role</h3>
+						<h3>Top Job Openings For This Role</h3>
 						<Table dataSource={this.state.openJobs} columns={jobOpeningColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 					</div>
 
