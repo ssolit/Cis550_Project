@@ -14,20 +14,17 @@ const employeeColumns = [
 		title: 'Page Employee Name',
 		dataIndex: 'employeeName',
 		key: 'employeeName',
-		// sorter: (a, b) => a.employeeName.localeCompare(b.employeeName),
 		render: (text, row) => <a href={`/EmployeePage?id=${row.employee_id}`}>{text}</a>
 	},
 	{
 		title: 'Company Name',
 		dataIndex: 'CompanyName',
 		key: 'CompanyName',
-		// sorter: (a, b) => a.CompanyName.localeCompare(b.CompanyName),
 	},
 	{
 		title: 'Page Role',
 		dataIndex: 'role',
 		key: 'role',
-		// sorter: (a, b) => a.role.localeCompare(b.role),
 	}
 ]
 
@@ -39,6 +36,32 @@ const specificEmployeeColumns = employeeColumns.concat([
 		// sorter: (a, b) => a.role.localeCompare(b.role),
 	}
 ]);
+
+const jobOpeningColumns = [
+	{
+		title: 'Role',
+		dataIndex: 'role',
+		key: 'role',
+		// render: (text, row) => <a href={`/JobPage?id=${row.id}`}>{text}</a>
+	},
+	{
+		title: 'Job ID',
+		dataIndex: 'job_id',
+		key: 'job_id',
+	},
+	{
+		title: 'Salary',
+		dataIndex: 'salary',
+		key: 'salary',
+		// sorter: (a, b) => a.role.localeCompare(b.role),
+	},
+	{
+		title: 'Company',
+		dataIndex: 'company',
+		key: 'company',
+		// sorter: (a, b) => a.role.localeCompare(b.role),
+	}
+]
 
 export default class EmployeePage extends React.Component {
 	constructor(props) {
@@ -183,7 +206,7 @@ export default class EmployeePage extends React.Component {
 
 					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
 						<h3>Job Openings for this Role</h3>
-						<Table dataSource={this.state.openJobs} columns={employeeColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
+						<Table dataSource={this.state.openJobs} columns={jobOpeningColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 					</div>
 
 

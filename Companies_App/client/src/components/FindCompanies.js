@@ -17,19 +17,19 @@ import {
 		title: 'Company Name',
 		dataIndex: 'CName',
 		key: 'CName',
-		render: (text, row) => <a href={`/FindCompanies?id=${row.CId}`}>{text}</a>
+		// render: (text, row) => <a href={`/CompanyPage?id=${row.CId}`}>{text}</a>
 	},
 	{
-	  title: 'Role',
-	  dataIndex: 'Role',
-	  key: 'Role'
+		title: 'Role',
+		dataIndex: 'Role',
+		key: 'Role'
 	},
 	{
-	  title: 'City',
-	  dataIndex: 'CCity',
-	  key: 'CCity'
+		title: 'City',
+		dataIndex: 'CCity',
+		key: 'CCity'
 	}
-  ]
+]
 
 export default class FindCompanies extends React.Component {
 	constructor(props) {
@@ -43,8 +43,8 @@ export default class FindCompanies extends React.Component {
 			companies: [],
 			roleQuery: "",
 			openingQuery: "",
-			locationQuery:"",
-			salaryQuery:""
+			locationQuery: "",
+			salaryQuery: ""
 		}
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -68,8 +68,8 @@ export default class FindCompanies extends React.Component {
 	}
 
 	handleRoleQueryChange(event) {
-        this.setState({ roleQuery: event.target.value })
-    }
+		this.setState({ roleQuery: event.target.value })
+	}
 
 	submitRoleQuery() {
 		fetch(`http://localhost:8081/companypos/${this.state.roleQuery}`,
@@ -86,7 +86,7 @@ export default class FindCompanies extends React.Component {
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
 						<div className="name">{company.Role}</div>
-						<div className="name">{}</div>
+						<div className="name">{ }</div>
 					</div>
 				);
 
@@ -99,8 +99,8 @@ export default class FindCompanies extends React.Component {
 	}
 
 	handleOpeningQueryChange(event) {
-        this.setState({ openingQuery: event.target.value })
-    }
+		this.setState({ openingQuery: event.target.value })
+	}
 
 	submitOpeningQuery() {
 		fetch(`http://localhost:8081/companyopening/${this.state.openingQuery}`,
@@ -117,7 +117,7 @@ export default class FindCompanies extends React.Component {
 					<div key={i} className="companyResults">
 						<div className="name">{company.CName}</div>
 						<div className="name">{company.Role}</div>
-						<div className="name">{}</div>
+						<div className="name">{ }</div>
 					</div>
 				);
 
@@ -130,12 +130,12 @@ export default class FindCompanies extends React.Component {
 	}
 
 	handleLocationQueryChange(event) {
-        this.setState({ locationQuery: event.target.value })
-    }
+		this.setState({ locationQuery: event.target.value })
+	}
 
 	handleSalaryQueryChange(event) {
-        this.setState({ salaryQuery: event.target.value })
-    }
+		this.setState({ salaryQuery: event.target.value })
+	}
 
 	submitJobQuery() {
 		fetch(`http://localhost:8081/jobopenings?Location=${this.state.locationQuery}&Salary=${this.state.salaryQuery}`,
@@ -162,7 +162,7 @@ export default class FindCompanies extends React.Component {
 					foundCompanies: companiesDivs
 				});
 			});
-    }
+	}
 
 	submitSearch() {
 		/* ---- Part 2 (FindCompanies) ---- */
@@ -183,7 +183,7 @@ export default class FindCompanies extends React.Component {
 					// TODO: (6) - Complete the HTML for this map function
 					<div key={i} className="companyResults">
 						<div className="name">{company.CompanyName}</div>
-						<div className="name">{}</div>
+						<div className="name">{ }</div>
 						<div className="name">{company.city}</div>
 						{/* <button onClick={this.submitCompanyPage} id="myButton" >Company Page</button> */}
 					</div>
@@ -214,39 +214,39 @@ export default class FindCompanies extends React.Component {
 				<div className="container recommendations-container">
 					<br></br>
 					<div className="jumbotron findFriend-headspace">
-					<div className="h5">Find Companies By Job Information</div>
+						<div className="h5">Find Companies By Job Information</div>
 						<Row>
-						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Company With Job Title</label>
-                            <FormInput placeholder="Title" value={this.state.roleQuery} onChange={this.handleRoleQueryChange} />
-							<br></br>
-							<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitRoleQuery}>Submit</button>
-                        </FormGroup>
-						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Company With Job Opening</label>
-                            <FormInput placeholder="Job Opening" value={this.state.openingQuery} onChange={this.handleOpeningQueryChange} />
-							<br></br>
-							<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitOpeningQuery}>Submit</button>
-                        </FormGroup>
-						<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-							<Row>
-							<Col>
-                            <label>Salary</label>
-                            <FormInput placeholder="Salary" value={this.state.salaryQuery} onChange={this.handleSalaryQueryChange} />
-							</Col>
-							<Col>
-							<label>City</label>
-                            <FormInput placeholder="City" value={this.state.locationQuery} onChange={this.handleLocationQueryChange} />
-							</Col>
-							</Row>
-							<br></br>
-							<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitJobQuery}>Submit</button>
-                        </FormGroup>
+							<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+								<label>Company With Job Title</label>
+								<FormInput placeholder="Title" value={this.state.roleQuery} onChange={this.handleRoleQueryChange} />
+								<br></br>
+								<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitRoleQuery}>Submit</button>
+							</FormGroup>
+							<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+								<label>Company With Job Opening</label>
+								<FormInput placeholder="Job Opening" value={this.state.openingQuery} onChange={this.handleOpeningQueryChange} />
+								<br></br>
+								<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitOpeningQuery}>Submit</button>
+							</FormGroup>
+							<FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+								<Row>
+									<Col>
+										<label>Salary</label>
+										<FormInput placeholder="Salary" value={this.state.salaryQuery} onChange={this.handleSalaryQueryChange} />
+									</Col>
+									<Col>
+										<label>City</label>
+										<FormInput placeholder="City" value={this.state.locationQuery} onChange={this.handleLocationQueryChange} />
+									</Col>
+								</Row>
+								<br></br>
+								<button type="submit" class="btn btn-primary" style={{ width: '10vw', margin: '0 auto' }} onClick={this.submitJobQuery}>Submit</button>
+							</FormGroup>
 						</Row>
 						<br></br>
 
 						<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-							<Table dataSource={this.state.companies} columns={companyColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+							<Table dataSource={this.state.companies} columns={companyColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 						</div>
 					</div>
 				</div>

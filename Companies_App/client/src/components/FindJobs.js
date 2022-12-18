@@ -147,7 +147,7 @@ export default class FindJobs extends React.Component {
 					<div className="jumbotron findFriend-headspace">
 						<div className="h5">Find Jobs</div>
 						<div className="input-container">
-							<input type='text' placeholder="Company Name" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
+							<input type='text' placeholder="Role" value={this.state.search} onChange={this.handleSearchChange} id="movieName" className="login-input" />
 							<button id="submitMovieBtn" className="submit-btn" onClick={this.submitSearch} >Submit</button>
 							<div>
 								<label>
