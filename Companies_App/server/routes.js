@@ -22,7 +22,6 @@ function getAllCompanies(req, res) {
   });
 };
 
-/* ---- Part 3 (FindCompanies) ---- */
 function getCompanies(req, res) {
   var inputSearch = req.params.name;
   var query = `
@@ -34,13 +33,11 @@ function getCompanies(req, res) {
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
-      console.log(rows);
       res.json(rows);
     }
   });
 };
 
-/* ---- Part 4 (companypage) ---- */
 function getCompanyPage(req, res) {
   var inputSearch = req.params.name;
 
@@ -52,68 +49,11 @@ function getCompanyPage(req, res) {
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
-      console.log(rows);
       res.json(rows);
     }
   });
 };
 
-
-/* --- query 1 --- */
-function employeesubs(req, res) {
-  var inputSearch = req.params.name;
-
-  var query = `
-    SELECT employee_id AS EId
-    FROM TO_Employees JOIN worksUnder wU ON TO_Employees.employee_id = wU.employee_id
-    WHERE parent_id = '%${inputSearch}%';
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
-
-/* --- query 2 --- */
-function companypos(req, res) {
-  var inputSearch = req.params.role;
-
-  var query = `
-    SELECT CompanyName AS CName, role AS Role
-    FROM TO_Employees
-    WHERE role LIKE '%${inputSearch}%';
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
-
-/* --- query 3 --- */
-function companyopening(req, res) {
-  var inputSearch = req.params.role;
-
-  var query = `
-    SELECT employer_name AS CName, title AS Role, location_cities_1 AS CCity
-    FROM HS_Jobs
-    WHERE title LIKE '%${inputSearch}%';
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
-
-/* --- query 4 --- */
 function company(req, res) {
   var inputSearch = req.params.id;
 
@@ -126,14 +66,44 @@ function company(req, res) {
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
-      console.log(rows);
+      res.json(rows);
+    }
+  });
+};
+
+function companypos(req, res) {
+  var inputSearch = req.params.role;
+
+  var query = `
+    SELECT CompanyName AS CName, role AS Role
+    FROM TO_Employees
+    WHERE role LIKE '%${inputSearch}%';
+  `;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+};
+
+function companyopening(req, res) {
+  var inputSearch = req.params.role;
+
+  var query = `
+    SELECT employer_name AS CName, title AS Role, location_cities_1 AS CCity
+    FROM HS_Jobs
+    WHERE title LIKE '%${inputSearch}%';
+  `;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
       res.json(rows);
     }
   });
 };
 
 
-/* --- query 5 --- */
 function jobopenings(req, res) {
   const Location = req.query.Location ? req.query.Location : ''
   const Salary = req.query.Salary ? req.query.Salary : 0
@@ -155,36 +125,13 @@ function jobopenings(req, res) {
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
-      console.log(rows);
       res.json(rows);
     }
   });
 };
 
-/* --- query 6 --- */
-function job(req, res) {
-  //var inputSearch = req.params.name;
-  const JName = req.query.JName ? req.query.JName : '%%'
 
-  var query = `
-    SELECT AVG(basesalary) AS Salary
-    FROM Salary s
-    JOIN HS_Jobs h ON h.employer_name = s.company
-      AND h.job_name = s.title
-    WHERE h.job_name LIKE '%${JName}%';
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
-
-/* --- query 7 --- */
 function companyceo(req, res) {
-  var CName = req.params.name;
   var inputSearch = req.params.id;
 
   var query = `
@@ -222,83 +169,16 @@ function companyceo(req, res) {
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
-      console.log(rows);
       res.json(rows);
     }
   });
 };
 
 
-/* --- query 8 --- */
-function employeesimilar(req, res) {
-  //var inputSearch = req.params.name;
-  const ERole = req.query.ERole ? req.query.ERole : '%%'
+/* Job Queries */
 
-  var query = `
-    WITH deg0 AS (
-      SELECT employee_id
-      FROM TO_Employees
-      WHERE role = '%${ERole}%'
-      LIMIT 5
-      ),
-      deg1 AS (
-          SELECT employee_id
-          FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss
-          UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)
-          LIMIT 5
-      ),
-      deg2 AS (
-          SELECT employee_id
-          FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss
-          UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)
-          LIMIT 5
-      ),
-      alldegs AS (
-              SELECT * FROM deg0
-              UNION (SELECT * FROM deg1)
-              UNION (SELECT * FROM deg2)
-      )
-    SELECT employee_id AS EId, employeeName AS EName, CompanyName AS CName, TO_Employees.role AS ERole, 
-           roleAutoFunction AS ERoleFunction, TO_Employees.description AS EDescription
-    FROM TO_Employees
-    JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
-    ORDER BY employeeName
-    LIMIT 5;
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
 
-/* --- query 9 --- */
-function getNoRemoteJobs(req, res) {
-  var inputSearch = req.params.title;
-  var query = `SELECT id, employer_name, title,
-                CASE
-                  WHEN remote=0 THEN "No"
-                  WHEN remote=1 THEN "Yes"
-                  ELSE "Unknown"
-                END AS remote
-              FROM HS_Jobs H
-              WHERE H.employer_name NOT IN (
-                  SELECT CompanyName
-                  FROM TO_Employees
-                  WHERE remote = 1
-                  ) AND H.remote = 0
-              AND H.title LIKE "%${inputSearch}%"
-              ORDER BY employer_name;`;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
 
-};
 
 
 
@@ -400,6 +280,32 @@ function getEstimatedSalary(req, res) {
 
 };
 
+/* --- query 9 --- */
+function getNoRemoteJobs(req, res) {
+  var inputSearch = req.params.title;
+  var query = `SELECT id, employer_name, title,
+                CASE
+                  WHEN remote=0 THEN "No"
+                  WHEN remote=1 THEN "Yes"
+                  ELSE "Unknown"
+                END AS remote
+              FROM HS_Jobs H
+              WHERE H.employer_name NOT IN (
+                  SELECT CompanyName
+                  FROM TO_Employees
+                  WHERE remote = 1
+                  ) AND H.remote = 0
+              AND H.title LIKE "%${inputSearch}%"
+              ORDER BY employer_name;`;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+};
+
 
 
 
@@ -453,6 +359,10 @@ function getEmployeeFromID(req, res) {
     }
   });
 };
+
+
+
+
 
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
@@ -532,6 +442,89 @@ function openJobSameTitle(req, res) {
 };
 
 
+
+// function employeesubs(req, res) {
+//   var inputSearch = req.params.name;
+
+//   var query = `
+//     SELECT employee_id AS EId
+//     FROM TO_Employees JOIN worksUnder wU ON TO_Employees.employee_id = wU.employee_id
+//     WHERE parent_id = '%${inputSearch}%';
+//   `;
+//   connection.query(query, function (err, rows, fields) {
+//     if (err) console.log(err);
+//     else {
+//       console.log(rows);
+//       res.json(rows);
+//     }
+//   });
+// };
+
+// function job(req, res) {
+//   const JName = req.query.JName ? req.query.JName : '%%'
+
+//   var query = `
+//     SELECT AVG(basesalary) AS Salary
+//     FROM Salary s
+//     JOIN HS_Jobs h ON h.employer_name = s.company
+//       AND h.job_name = s.title
+//     WHERE h.job_name LIKE '%${JName}%';
+//   `;
+//   connection.query(query, function (err, rows, fields) {
+//     if (err) console.log(err);
+//     else {
+//       console.log(rows);
+//       res.json(rows);
+//     }
+//   });
+// };
+
+
+// function employeesimilar(req, res) {
+//   //var inputSearch = req.params.name;
+//   const ERole = req.query.ERole ? req.query.ERole : '%%'
+
+//   var query = `
+//     WITH deg0 AS (
+//       SELECT employee_id
+//       FROM TO_Employees
+//       WHERE role = '%${ERole}%'
+//       LIMIT 5
+//       ),
+//       deg1 AS (
+//           SELECT employee_id
+//           FROM (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.parent_id) boss
+//           UNION (SELECT deg0.employee_id FROM worksUnder JOIN deg0 ON deg0.employee_id = worksUnder.employee_id)
+//           LIMIT 5
+//       ),
+//       deg2 AS (
+//           SELECT employee_id
+//           FROM (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.parent_id) boss
+//           UNION (SELECT deg1.employee_id FROM worksUnder JOIN deg1 ON deg1.employee_id = worksUnder.employee_id)
+//           LIMIT 5
+//       ),
+//       alldegs AS (
+//               SELECT * FROM deg0
+//               UNION (SELECT * FROM deg1)
+//               UNION (SELECT * FROM deg2)
+//       )
+//     SELECT employee_id AS EId, employeeName AS EName, CompanyName AS CName, TO_Employees.role AS ERole, 
+//            roleAutoFunction AS ERoleFunction, TO_Employees.description AS EDescription
+//     FROM TO_Employees
+//     JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
+//     ORDER BY employeeName
+//     LIMIT 5;
+//   `;
+//   connection.query(query, function (err, rows, fields) {
+//     if (err) console.log(err);
+//     else {
+//       console.log(rows);
+//       res.json(rows);
+//     }
+//   });
+// };
+
+
 // The exported functions, which can be accessed in index.js.
 module.exports = {
   getAllCompanies: getAllCompanies,
@@ -542,14 +535,14 @@ module.exports = {
   getEmployeeFromID: getEmployeeFromID,
   getSimilarEmployees: getSimilarEmployees,
 
-  employeesubs,
+  // employeesubs,
   companypos,
   companyopening,
   company,
   jobopenings,
-  job,
+  // job,
   companyceo,
-  employeesimilar,
+  // employeesimilar,
 
 
   getAllJobs: getAllJobs,
