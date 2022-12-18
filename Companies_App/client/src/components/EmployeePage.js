@@ -4,14 +4,7 @@ import '../style/FindEmployees.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
-	Table,
-	Pagination,
-	Select,
-	Row,
-	Col,
-	Divider,
-	Slider,
-	Rate
+	Table
 } from 'antd'
 
 
@@ -109,8 +102,11 @@ export default class EmployeePage extends React.Component {
 				this.setState({
 					openJobs: openJobList,
 				})
+				console.log("top job")
+				console.log(openJobList)
 			}
 			);
+		
 
 
 

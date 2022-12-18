@@ -3,7 +3,6 @@ import PageNavbar from './PageNavbar';
 import '../style/FindJobs.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {
-	Space,
 	Table
 } from 'antd'
 

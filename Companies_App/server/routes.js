@@ -314,40 +314,6 @@ function companynotremote(req, res) {
   });
 };
 
-/* --- query 10 --- */
-function openJobSameTitle(req, res) {
-  var EId = req.params.id;
-
-  var query = `
-    WITH eq_role_postings AS (SELECT open_sals.role, job_id, salary, company
-      FROM (SELECT *
-            FROM (SELECT role
-                  FROM TO_Employees
-                  WHERE employee_id = ${EId}) employee_reduce
-                    Natural JOIN
-                  (SELECT Salary.title AS role, company, MAX(basesalary + bonus) AS salary
-                  FROM Salary
-                  GROUP BY title, company) sal_reduce) open_sals
-            JOIN
-            (SELECT HS_Jobs.title AS role, HS_Jobs.id AS job_id, employer_name
-             FROM HS_Jobs) job_reduce
-            ON company=employer_name AND open_sals.role=job_reduce.role
-    )
-    SELECT HS_Jobs.id AS JId, To_Employees.role AS ERole, Salary.baseSalary AS Salary, employer_name AS CName
-    FROM eq_role_postings
-    WHERE salary >= ALL (
-    SELECT salary
-    FROM eq_role_postings
-    );
-  `;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });
-};
 
 // job functions
 function getAllJobs(req, res) {
@@ -495,7 +461,6 @@ function getEmployees(req, res) {
     SELECT employee_id, employeeName, CompanyName, role
     FROM TO_Employees
     WHERE employeeName LIKE "%${inputSearch}%"
-    
   `;
 
   connection.query(query, function (err, rows, fields) {
@@ -529,7 +494,6 @@ function getEmployeeFromID(req, res) {
 
 function getSimilarEmployees(req, res) {
   var inputPerson = req.params.employee_id;
-  console.log(`in routes.js/getSimilarEmployees. input = ${inputPerson}`)
   var query = `WITH desiredRole AS (
                   SELECT role
                   FROM TO_Employees
@@ -562,13 +526,6 @@ function getSimilarEmployees(req, res) {
               JOIN alldegs ON TO_Employees.employee_id = alldegs.employee_id
               ORDER BY employeeName
               LIMIT 5`;
-
-  // connection.query(query, function (err, rows, fields) {
-  //   if (err) console.log(err);
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
@@ -578,7 +535,40 @@ function getSimilarEmployees(req, res) {
 
 };
 
-
+/* --- query 10 --- */
+function openJobSameTitle(req, res) {
+  var EId = req.params.id;
+  console.log(`in routes.js/getSimilarEmployees. input = ${EID}`)
+  var query = `
+    WITH eq_role_postings AS (SELECT open_sals.role, job_id, salary, company
+      FROM (SELECT *
+            FROM (SELECT role
+                  FROM TO_Employees
+                  WHERE employee_id = ${EId}) employee_reduce
+                    Natural JOIN
+                  (SELECT Salary.title AS role, company, MAX(basesalary + bonus) AS salary
+                  FROM Salary
+                  GROUP BY title, company) sal_reduce) open_sals
+            JOIN
+            (SELECT HS_Jobs.title AS role, HS_Jobs.id AS job_id, employer_name
+             FROM HS_Jobs) job_reduce
+            ON company=employer_name AND open_sals.role=job_reduce.role
+    )
+    SELECT job_id, role, salary, company
+    FROM eq_role_postings
+    WHERE salary >= ALL (
+    SELECT salary
+    FROM eq_role_postings
+    );
+  `;
+  connection.query(query, function (err, rows, fields) {
+    if (err) console.log(err);
+    else {
+      // console.log(rows);
+      res.json(rows);
+    }
+  });
+};
 
 
 // The exported functions, which can be accessed in index.js.

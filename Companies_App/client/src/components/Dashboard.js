@@ -4,14 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import PageNavbar from './PageNavbar';
 
 import {
-  Table,
-  Pagination,
-  Select,
-  Row,
-  Col,
-  Divider,
-  Slider,
-  Rate 
+  Table
 } from 'antd'
 
 const companyColumns = [

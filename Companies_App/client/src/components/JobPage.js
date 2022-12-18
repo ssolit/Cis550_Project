@@ -34,13 +34,13 @@ const jobColumns = [
 
 ]
 
-const specificJobColumns = jobColumns.concat([
-	{
-		title: 'Remote',
-		dataIndex: 'remote',
-		key: 'remote',
-	}
-]);
+// const specificJobColumns = jobColumns.concat([
+// 	{
+// 		title: 'Remote',
+// 		dataIndex: 'remote',
+// 		key: 'remote',
+// 	}
+// ]);
 
 export default class JobPage extends React.Component {
 	constructor(props) {

@@ -4,17 +4,12 @@ import '../style/FindCompanies.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "shards-ui/dist/css/shards.min.css";
 
-import { Form, FormInput, FormGroup } from "shards-react";
+import { FormInput, FormGroup } from "shards-react";
 
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import {
-	Table,
-	Pagination,
-	Select,
-	Divider,
-	Slider,
-	Rate 
+	Table
   } from 'antd'
   
   const companyColumns = [
