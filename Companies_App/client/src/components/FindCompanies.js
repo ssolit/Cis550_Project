@@ -165,10 +165,6 @@ export default class FindCompanies extends React.Component {
 	}
 
 	submitSearch() {
-		/* ---- Part 2 (FindCompanies) ---- */
-		// TODO: (4) - Complete the fetch for this function
-		// Hint: Name of search submitted is contained in `this.state.search`.
-
 		fetch(`http://localhost:8081/companies/${this.state.name}`,
 			{
 				method: "GET"

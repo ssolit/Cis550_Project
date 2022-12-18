@@ -33,33 +33,30 @@ const specificEmployeeColumns = employeeColumns.concat([
 		title: 'Remote',
 		dataIndex: 'remote',
 		key: 'remote',
-		// sorter: (a, b) => a.role.localeCompare(b.role),
 	}
 ]);
 
 const jobOpeningColumns = [
 	{
-		title: 'Role',
-		dataIndex: 'role',
-		key: 'role',
-		// render: (text, row) => <a href={`/JobPage?id=${row.id}`}>{text}</a>
-	},
-	{
 		title: 'Job ID',
 		dataIndex: 'job_id',
 		key: 'job_id',
+		render: (text, row) => <a href={`/JobPage?id=${row.job_id}`}>{text}</a>
+	},
+	{
+		title: 'Role',
+		dataIndex: 'role',
+		key: 'role',
 	},
 	{
 		title: 'Salary',
 		dataIndex: 'salary',
 		key: 'salary',
-		// sorter: (a, b) => a.role.localeCompare(b.role),
 	},
 	{
 		title: 'Company',
 		dataIndex: 'company',
 		key: 'company',
-		// sorter: (a, b) => a.role.localeCompare(b.role),
 	}
 ]
 
@@ -191,6 +188,11 @@ export default class EmployeePage extends React.Component {
 						</div>
 						<p>{this.state.employeeDetails[0]["description"]} </p>
 
+					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+						<h3>Top Job Opening For This Role</h3>
+						<Table dataSource={this.state.openJobs} columns={jobOpeningColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
+					</div>
+
 					</div>
 
 
@@ -199,13 +201,6 @@ export default class EmployeePage extends React.Component {
 						<h3>Similar Employees</h3>
 						<Table dataSource={this.state.similarEmployees} columns={employeeColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
 					</div>
-
-					<div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-						<h3>Top Job Openings For This Role</h3>
-						<Table dataSource={this.state.openJobs} columns={jobOpeningColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
-					</div>
-
-
 
 				</div>
 

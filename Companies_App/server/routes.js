@@ -8,7 +8,7 @@ var connection = mysql.createPool(config);
 /* ------------------- Route Handlers --------------- */
 /* -------------------------------------------------- */
 
-/* ---- (Dashboard) ---- */
+/* Company Queries */
 function getAllCompanies(req, res) {
   var query = `
   SELECT CompanyName AS CName, city AS CCity, state AS CState
@@ -25,8 +25,6 @@ function getAllCompanies(req, res) {
 /* ---- Part 3 (FindCompanies) ---- */
 function getCompanies(req, res) {
   var inputSearch = req.params.name;
-
-  // TODO: (3) - Edit query below
   var query = `
     SELECT company_id AS CId, CompanyName AS CName, city AS CCity, state AS CState, country AS CCountry,
     employeeSizeRange AS Size, description AS CDescription

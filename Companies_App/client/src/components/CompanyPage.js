@@ -71,8 +71,6 @@ export default class CompanyPage extends React.Component {
 
 		this.handleSearchChange = this.handleSearchChange.bind(this);
 		this.submitSearch = this.submitSearch.bind(this);
-		console.log("CId: " + this.state.CId)
-		console.log(this.state.companyDetails[0]["CDescription"])
 	}
 
 	// React function that is called when the page load.
