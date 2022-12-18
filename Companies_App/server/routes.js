@@ -133,7 +133,7 @@ function jobopenings(req, res) {
 
 function companyceo(req, res) {
   var inputSearch = req.params.id;
-
+  console.log("started ceo query on ")
   var query = `
   WITH CompanyCEO AS (
     SELECT employee_id
@@ -158,13 +158,13 @@ function companyceo(req, res) {
         ),
     AllDof3Employees AS (
         SELECT * FROM CompanyCEO
-        UNION (SELECT * FROM Dof1)
-        UNION (SELECT * FROM Dof2)
-        UNION (SELECT * FROM Dof3)
+        UNION ALL (SELECT * FROM Dof1)
+        UNION ALL (SELECT * FROM Dof2)
+        UNION ALL (SELECT * FROM Dof3)
     )
-  SELECT employeeName AS EName, role AS ERole, description AS EDescription, AllDof3Employees.employee_id AS EId
-  FROM TO_Employees
-  JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id;
+ SELECT DISTINCT employeeName AS Name, role AS Role, description AS Description
+ FROM TO_Employees
+ JOIN AllDof3Employees ON TO_Employees.employee_id = AllDof3Employees.employee_id; 
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -535,14 +535,12 @@ module.exports = {
   getEmployeeFromID: getEmployeeFromID,
   getSimilarEmployees: getSimilarEmployees,
 
-  // employeesubs,
+
   companypos,
   companyopening,
   company,
   jobopenings,
-  // job,
   companyceo,
-  // employeesimilar,
 
 
   getAllJobs: getAllJobs,
