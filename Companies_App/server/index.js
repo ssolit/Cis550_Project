@@ -13,20 +13,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 /* ------------------- Route handler registration ----------------- */
 /* ---------------------------------------------------------------- */
 
-/* ---- (Dashboard) ---- */
-// The route localhost:8081/companies is registered to the function
-// routes.getAllCompanies, specified in routes.js.
 app.get('/companies', routes.getAllCompanies);
-
-/* ---- Part 3 (FindCompanies) ---- */
-// TODO: (2) - Add route '/companies/:name' for the functionality of FindCompanies page 
 app.get('/companies/:name', routes.getCompanies); // Hint: Replace () => {} with the appropriate route handler in routes.js.
-
-/* ---- Part 3 (companypage) ---- */
-// TODO: (2) - Add route '/companies/:name' for the functionality of FindCompanies page 
 app.get('/companypage/:name', routes.getCompanyPage); // Hint: Replace () => {} with the appropriate route handler in routes.js.
 
-/* ---- Part 4 (FindJobs) ---- */
+/* ---- Find Jobs ---- */
 app.get('/jobs', routes.getAllJobs);
 app.get('/jobs/:title', routes.getJobs);
 app.get('/jobFromId/:id', routes.getJobFromID);
@@ -51,6 +42,7 @@ app.get('/companyInfo/:id', routes.company);
 /* company ceo */
 app.get('/companyceo/:id', routes.companyceo);
 
+/* ---- Find Employees ---- */
 app.get('/employees', routes.getAllEmployees);
 app.get('/employees/:name', routes.getEmployees);
 app.get('/employeeFromId/:id', routes.getEmployeeFromID);

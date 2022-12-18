@@ -60,24 +60,6 @@ function getCompanyPage(req, res) {
   });
 };
 
-/* ---- Part 5 (find Jobs Page) ---- */
-// function getJobs(req, res) {
-//   var inputSearch = req.params.name;
-
-//   var query = `
-//     SELECT id AS id, employer_name AS Company, job_name AS JobName
-//     FROM HS_Jobs
-//     WHERE employer_name LIKE "${inputSearch}"
-//   `;
-//   connection.query(query, function (err, rows, fields) {
-//     if (err) console.log(err);
-//     else {
-//       console.log(rows);
-//       res.json(rows);
-//     }
-//   });
-// };
-
 
 /* --- query 1 --- */
 function employeesubs(req, res) {
@@ -295,23 +277,29 @@ function employeesimilar(req, res) {
 };
 
 /* --- query 9 --- */
-function companynotremote(req, res) {
-  var query = `
-    SELECT CompanyName AS CName
-    FROM HS_Jobs
-    WHERE employer_name NOT IN (
-      SELECT CompanyName
-      FROM TO_Employees
-      WHERE remote = 0
-    );
-  `;
+function getNoRemoteJobs(req, res) {
+  var inputSearch = req.params.title;
+  var query = `SELECT id, employer_name, title,
+                CASE
+                  WHEN remote=0 THEN "No"
+                  WHEN remote=1 THEN "Yes"
+                  ELSE "Unknown"
+                END AS remote
+              FROM HS_Jobs H
+              WHERE H.employer_name NOT IN (
+                  SELECT CompanyName
+                  FROM TO_Employees
+                  WHERE remote = 1
+                  ) AND H.remote = 0
+              AND H.title LIKE "%${inputSearch}%"
+              ORDER BY employer_name;`;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
     else {
-      console.log(rows);
       res.json(rows);
     }
   });
+
 };
 
 /* --- query 10 --- */
@@ -319,26 +307,26 @@ function openJobSameTitle(req, res) {
   var EId = req.params.id;
 
   var query = `
-    WITH eq_role_postings AS (SELECT open_sals.role, job_id, salary, company
+  WITH eq_role_postings AS
+  (SELECT open_sals.role, job_id, salary, company
       FROM (SELECT *
-            FROM (SELECT role
-                  FROM TO_Employees
-                  WHERE employee_id = ${EId}) employee_reduce
-                    Natural JOIN
-                  (SELECT Salary.title AS role, company, MAX(basesalary + bonus) AS salary
-                  FROM Salary
-                  GROUP BY title, company) sal_reduce) open_sals
-            JOIN
-            (SELECT HS_Jobs.title AS role, HS_Jobs.id AS job_id, employer_name
-             FROM HS_Jobs) job_reduce
-            ON company=employer_name AND open_sals.role=job_reduce.role
-    )
-    SELECT HS_Jobs.id AS JId, To_Employees.role AS ERole, Salary.baseSalary AS Salary, employer_name AS CName
-    FROM eq_role_postings
-    WHERE salary >= ALL (
-    SELECT salary
-    FROM eq_role_postings
-    );
+          FROM (SELECT role
+                FROM TO_Employees
+                WHERE employee_id = ${EId}) employee_reduce
+                Natural JOIN
+                (SELECT Salary.title AS role, company,
+                    MAX(basesalary + bonus) AS salary
+                 FROM Salary
+                 GROUP BY title, company) sal_reduce) open_sals
+                 JOIN
+                 (SELECT HS_Jobs.title AS role, HS_Jobs.id AS job_id, employer_name
+                  FROM HS_Jobs) job_reduce
+                 ON company=employer_name AND open_sals.role=job_reduce.role)
+SELECT *
+FROM eq_role_postings
+WHERE salary >= ALL (
+  SELECT salary
+  FROM eq_role_postings);
   `;
   connection.query(query, function (err, rows, fields) {
     if (err) console.log(err);
@@ -349,7 +337,7 @@ function openJobSameTitle(req, res) {
   });
 };
 
-// job functions
+// job routes
 function getAllJobs(req, res) {
   var query = `SELECT id, employer_name, title, 
               CASE
@@ -447,35 +435,10 @@ function getEstimatedSalary(req, res) {
 
 };
 
-function getNoRemoteJobs(req, res) {
-  var inputSearch = req.params.title;
-  var query = `SELECT id, employer_name, title,
-                CASE
-                  WHEN remote=0 THEN "No"
-                  WHEN remote=1 THEN "Yes"
-                  ELSE "Unknown"
-                END AS remote
-              FROM HS_Jobs H
-              WHERE H.employer_name NOT IN (
-                  SELECT CompanyName
-                  FROM TO_Employees
-                  WHERE remote = 1
-                  ) AND H.remote = 0
-              AND H.title LIKE "%${inputSearch}%"
-              ORDER BY employer_name;`;
-  connection.query(query, function (err, rows, fields) {
-    if (err) console.log(err);
-    else {
-      res.json(rows);
-    }
-  });
-
-};
 
 
-// employee functions
 
-
+// employee routes
 function getAllEmployees(req, res) {
   var query = `SELECT employee_id, employeeName, CompanyName, role 
               FROM TO_Employees 
@@ -599,7 +562,6 @@ module.exports = {
   job,
   companyceo,
   employeesimilar,
-  companynotremote,
 
 
   getAllJobs: getAllJobs,
